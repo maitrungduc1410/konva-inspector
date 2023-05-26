@@ -1,5 +1,4 @@
 import type TKonva from "konva";
-import { OutlineNode } from "../types";
 
 export default function konvaDevtools() {
   const win = window as any;
@@ -22,19 +21,6 @@ export default function konvaDevtools() {
     return undefined;
   }
 
-  function getRenderedBy(node: TKonva.Node) {
-    const trees: string[] = [];
-
-    const parent = node.getParent();
-    if (parent) {
-      trees.push(node.getParent().getClassName());
-      const result = getRenderedBy(parent);
-      trees.push(result);
-    }
-
-    return trees;
-  }
-
   function Konva(): typeof TKonva {
     return getGlobal("Konva");
   }
@@ -44,8 +30,8 @@ export default function konvaDevtools() {
     content(stageIndex = 0) {
       return Konva().stages[stageIndex].getContent();
     },
-    renderedBy(node: TKonva.Node) {
-      return getRenderedBy(node);
+    stage(stageIndex = 0) {
+      return Konva().stages[stageIndex];
     },
   };
 }

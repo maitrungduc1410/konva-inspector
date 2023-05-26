@@ -33,7 +33,10 @@ export default function konvaDevtoolsOverlay(devtools: KonvaDevtools) {
     function calibrateOverlay() {
       const content = devtools.content(stageIndex);
       const contentBounds = content.getBoundingClientRect();
-      overlayEl.style.transform = `translate(${contentBounds.x}px, ${contentBounds.y}px)`;
+      const stage = devtools.stage(stageIndex);
+      overlayEl.style.transform = `translate(${
+        contentBounds.x + stage.x()
+      }px, ${contentBounds.y + stage.y()}px)`;
     }
 
     let throttle = 0;

@@ -1,6 +1,9 @@
 <div align="center">
 <img src="public/icon128.png" alt="logo"/>
 <h1>Konva Devtools</h1>
+<div>
+<a href="https://chrome.google.com/webstore/detail/konvajs-devtools/aleknfecbpmpnkfoaohgpffcjenmjjfi">Chrome Extension</a>
+</div>
 
 <img src="public/demo.png" alt="logo"/>
 </div>

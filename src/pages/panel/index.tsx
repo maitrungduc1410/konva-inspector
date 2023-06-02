@@ -6,26 +6,7 @@ import Panel from "./components/Panel";
 
 refreshOnUpdate("pages/panel");
 
-let root: Root;
-function init() {
-  const appContainer = document.getElementById("app") as HTMLDivElement;
-  if (!appContainer) {
-    throw new Error("Can not find #app");
-  }
-  root = createRoot(appContainer);
-  root.render(<Panel />);
-  appContainer.addEventListener("mouseleave", () => {
-    bridge(
-      "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()"
-    );
-  });
-}
-
-init();
-
-export type BridgeFn = <T>(code: string) => Promise<T>;
-
-export const bridge: BridgeFn = (code: string) => {
+const bridge: BridgeFn = (code: string) => {
   return new Promise((resolve, reject) => {
     chrome.devtools.inspectedWindow.eval(code, (result, err) => {
       if (err) {
@@ -40,10 +21,32 @@ export const bridge: BridgeFn = (code: string) => {
   });
 };
 
-connect(bridge);
+let root: Root;
+function init() {
+  connect(bridge);
 
-chrome.windows.onFocusChanged.addListener((window) => {
-  bridge(
-    "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()"
-  );
-});
+  if (root) return;
+  const appContainer = document.getElementById("app") as HTMLDivElement;
+  if (!appContainer) {
+    throw new Error("Can not find #app");
+  }
+  root = createRoot(appContainer);
+  root.render(<Panel />);
+  appContainer.addEventListener("mouseleave", () => {
+    bridge(
+      "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()"
+    );
+  });
+
+  chrome.windows.onFocusChanged.addListener(() => {
+    bridge(
+      "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()"
+    );
+  });
+}
+
+init();
+
+export type BridgeFn = <T>(code: string) => Promise<T>;
+
+export { bridge };

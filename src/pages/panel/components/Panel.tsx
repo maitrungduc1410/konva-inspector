@@ -6,6 +6,7 @@ import { OutlineNode } from "../types";
 import InspectedElement from "./InspectedElement";
 import ToggleOff from "./ToggleOff";
 import SearchIcon from "./SearchIcon";
+import connect from "../devtools/connect";
 
 const Panel: React.FC = () => {
   const [trees, setTrees] = useState<OutlineNode[]>([]);
@@ -30,21 +31,41 @@ const Panel: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    function handleReload() {
+      setTrees([]);
+      setSelectedNode(null);
+      setSearchText("");
+      setAlwaysInspect(false);
+      connect(bridge);
+    }
+    // listen on host page reload
+    chrome.devtools.network.onNavigated.addListener(handleReload);
+
+    return () => {
+      chrome.devtools.network.onNavigated.removeListener(handleReload);
+    };
+  }, []);
+
+  useEffect(() => {
     if (alwaysInspect) {
       // below we have && 1, to make the evaluation return a number
       // otherwise it'll return a Stage instance and the bridge will fail
+      // we also check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
       bridge(`
-        Konva.stages[0].addEventListener("mouseover", window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selectShapeAtCursor) && 1
+        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ &&
+        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() &&
+        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva().stages[0].addEventListener("mouseover", window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selectShapeAtCursor) && 1
       `);
     }
 
     return () => {
       // below we need to assign result to a const
       // otherwise it'll return a Stage instance and the bridge will fail
+      // we also check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
       bridge(`
-          if (window.__KONVA_DEVTOOLS_GLOBAL_HOOK__) {
-            Konva.stages[0].removeEventListener("mouseover", window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selectShapeAtCursor) && 1
-          }
+        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ &&
+        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() &&
+        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva().stages[0].removeEventListener("mouseover", window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selectShapeAtCursor) && 1
       `);
     };
   }, [alwaysInspect]);
@@ -54,7 +75,13 @@ const Panel: React.FC = () => {
       const data = await bridge<OutlineNode[]>(
         "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.outline.trees()"
       );
-      setTrees(data);
+      if (data) {
+        setTrees(data);
+      } else {
+        // in case __KONVA_DEVTOOLS_GLOBAL_HOOK__ is undefined
+        // can happen during host page reload
+        setTrees([]);
+      }
     } catch (error) {
       console.log(error);
     }

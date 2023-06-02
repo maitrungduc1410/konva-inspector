@@ -48,10 +48,11 @@ export default defineConfig({
         panel: resolve(pagesDir, "panel", "index.html"),
         content: resolve(pagesDir, "content", "index.ts"),
         background: resolve(pagesDir, "background", "index.ts"),
-        contentStyle: resolve(pagesDir, "content", "style.scss"),
+        // contentStyle: resolve(pagesDir, "content", "style.scss"),
         popup: resolve(pagesDir, "popup", "index.html"),
-        newtab: resolve(pagesDir, "newtab", "index.html"),
-        options: resolve(pagesDir, "options", "index.html"),
+        detector: resolve(pagesDir, "content", "detector.ts"),
+        // newtab: resolve(pagesDir, "newtab", "index.html"),
+        // options: resolve(pagesDir, "options", "index.html"),
       },
       watch: {
         include: ["src/**", "vite.config.ts"],
@@ -66,9 +67,9 @@ export default defineConfig({
           const { dir, name: _name } = path.parse(assetInfo.name);
           const assetFolder = dir.split("/").at(-1);
           const name = assetFolder + firstUpperCase(_name);
-          if (name === "contentStyle") {
-            return `assets/css/contentStyle${cacheInvalidationKey}.chunk.css`;
-          }
+          // if (name === "contentStyle") {
+          //   return `assets/css/contentStyle${cacheInvalidationKey}.chunk.css`;
+          // }
           return `assets/[ext]/${name}.chunk.[ext]`;
         },
       },

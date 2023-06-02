@@ -9,3 +9,12 @@ reloadOnUpdate("pages/background");
 reloadOnUpdate("pages/content/style.scss");
 
 console.log("background loaded");
+
+chrome.runtime.onMessage.addListener(function (message, sender, sendResponse) {
+  if (message.type === "__KONVA_DEVTOOLS__BROADCAST_RESULT") {
+    chrome.action.setIcon({
+      path: `../../../icon32${!message.result ? "_black" : ""}.png`,
+      tabId: sender.tab.id,
+    });
+  }
+});

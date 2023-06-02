@@ -9,14 +9,14 @@ const manifest: chrome.runtime.ManifestV3 = {
   version: packageJson.version,
   description: packageJson.description,
   // options_page: "src/pages/options/index.html",
-  // background: {
-  //   service_worker: "src/pages/background/index.js",
-  //   type: "module",
-  // },
-  // action: {
-  //   default_popup: "src/pages/popup/index.html",
-  //   default_icon: "icon-34.png",
-  // },
+  background: {
+    service_worker: "src/pages/background/index.js",
+    type: "module",
+  },
+  action: {
+    default_popup: "src/pages/popup/index.html",
+    default_icon: "icon32_black.png",
+  },
   // chrome_url_overrides: {
   //   newtab: "src/pages/newtab/index.html",
   // },
@@ -27,12 +27,13 @@ const manifest: chrome.runtime.ManifestV3 = {
     "128": "icon128.png",
   },
   content_scripts: [
-    // {
-    //   matches: ["http://*/*", "https://*/*", "<all_urls>"],
-    //   js: ["src/pages/content/index.js"],
-    //   // KEY for cache invalidation
-    //   css: ["assets/css/contentStyle<KEY>.chunk.css"],
-    // },
+    {
+      matches: ["http://*/*", "https://*/*", "<all_urls>"],
+      js: ["src/pages/content/index.js"],
+      css: [],
+      // KEY for cache invalidation
+      // css: ["assets/css/contentStyle<KEY>.chunk.css"],
+    },
   ],
   devtools_page: "src/pages/devtools/index.html",
   web_accessible_resources: [
@@ -40,11 +41,7 @@ const manifest: chrome.runtime.ManifestV3 = {
       resources: [
         "assets/js/*.js",
         "assets/css/*.css",
-        "icon-16.png",
-        "icon-19.png",
-        "icon-38.png",
-        "icon-48.png",
-        "icon-128.png",
+        "src/pages/detector/index.js",
       ],
       matches: ["*://*/*"],
     },

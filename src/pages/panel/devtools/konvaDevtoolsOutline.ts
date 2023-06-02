@@ -23,7 +23,9 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
   // we create our own version of toObject based on toObject function from Konva
   // the purpose of this is to allows us add any custom fields as we want
   function toObject(node: Konva.Node): OutlineNode {
+    // eslint-disable-next-line prefer-const
     let obj = {} as any,
+      // eslint-disable-next-line prefer-const
       attrs = node.getAttrs(),
       key,
       val,
@@ -63,6 +65,8 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
 
   return {
     trees(): OutlineNode[] {
+      if (!devtools.Konva()) return [];
+
       const results = [];
 
       for (const stage of devtools.Konva().stages) {

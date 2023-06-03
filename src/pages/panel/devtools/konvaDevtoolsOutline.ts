@@ -75,6 +75,8 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
       return results;
     },
     select(_id: number, stageIndex = 0, serialize = true) {
+      if (!devtools.Konva()) return undefined;
+
       const stage = devtools.Konva().stages[stageIndex];
       if (stage._id === _id) return serialize ? toObject(stage) : stage;
       const item = stage.findOne((n) => n._id === _id);

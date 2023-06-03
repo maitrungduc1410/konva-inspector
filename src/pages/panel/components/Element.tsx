@@ -7,6 +7,7 @@ import { bridge } from "..";
 interface IProps {
   searchText: string;
   selectedNode: OutlineNode | null;
+  activeNode: OutlineNode | null;
   stageIndex: number;
   indent: number;
   node: OutlineNode;
@@ -16,6 +17,7 @@ interface IProps {
 export default function Element({
   searchText,
   selectedNode,
+  activeNode,
   stageIndex,
   indent,
   node,
@@ -41,20 +43,21 @@ export default function Element({
   return (
     <>
       <div
+        id={node._id.toString()}
         className={`element ${
           selectedNode?._id === node._id ? "selected" : ""
-        }`}
+        } ${activeNode?._id === node._id ? "active" : ""}`}
         style={{ paddingLeft: indent * 15 }}
         onClick={async () => {
           const data = await bridge<OutlineNode>(
-            `__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.select(${node._id}, ${stageIndex})`
+            `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.select(${node._id}, ${stageIndex})`
           );
 
           onSelectNode(data);
         }}
         onMouseEnter={() => {
           bridge(
-            `__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.activate(${node._id}, ${stageIndex})`
+            `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.activate(${node._id}, ${stageIndex})`
           );
         }}
       >
@@ -78,6 +81,7 @@ export default function Element({
             key={item._id}
             searchText={searchText}
             selectedNode={selectedNode}
+            activeNode={activeNode}
             stageIndex={stageIndex}
             indent={indent + 1}
             node={item}

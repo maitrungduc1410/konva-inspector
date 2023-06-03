@@ -1,9 +1,7 @@
-let lastResult = false;
-
 detect();
 const interval = setInterval(detect, 5000);
 
-function detect() {
+function detect(requestDetectionCallback?: (data: any) => void) {
   try {
     const s = document.createElement("script");
     s.src = chrome.runtime.getURL("src/pages/detector/index.js");
@@ -12,13 +10,12 @@ function detect() {
       document.addEventListener(
         "__KONVA_DEVTOOLS__DETECTION_RESULT",
         function (e: CustomEvent) {
-          lastResult = e.detail;
-
           chrome.runtime.sendMessage({
             type: "__KONVA_DEVTOOLS__BROADCAST_RESULT",
-            result: lastResult,
+            result: e.detail,
           });
           s.remove();
+          requestDetectionCallback && requestDetectionCallback(e.detail);
         }
       );
 
@@ -32,7 +29,7 @@ function detect() {
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
   if (request["type"] == "__KONVA_DEVTOOLS__REQUEST_DETECTION") {
-    sendResponse(lastResult);
+    detect(sendResponse);
   }
   return true; // this make sure sendResponse will work asynchronously
 });

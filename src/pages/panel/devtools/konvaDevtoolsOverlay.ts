@@ -1,3 +1,4 @@
+import type Konva from "konva";
 import { KonvaDevtools } from "../types";
 
 export default function konvaDevtoolsOverlay(devtools: KonvaDevtools) {
@@ -43,7 +44,7 @@ export default function konvaDevtoolsOverlay(devtools: KonvaDevtools) {
 
     function updateHighlight() {
       raf = requestAnimationFrame(updateHighlight);
-      const node = devtools.selection.active();
+      const node = devtools.selection.active() as Konva.Node;
       if (!node) return;
       const rect = node.getClientRect();
       overlayEl.style.top = rect.y.toString() + "px";

@@ -6,8 +6,9 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
   let selectedNode: Konva.Container;
 
   return {
-    active(): Konva.Node | undefined {
-      return activeNode;
+    active(serialize = false): Konva.Node | OutlineNode | undefined {
+      if (!activeNode) return undefined;
+      return serialize ? devtools.outline.toObject(activeNode) : activeNode;
     },
     selected(serialize = false): Konva.Node | OutlineNode | undefined {
       if (!selectedNode) return undefined;
@@ -40,6 +41,7 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
       selectedNode.setAttrs(attrs);
     },
     selectShapeAtCursor() {
+      // TODO: handle multi stages
       const stage = devtools.Konva().stages[0];
       const pointerPosition = stage.getPointerPosition();
       if (pointerPosition) {
@@ -50,6 +52,19 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
           devtools.selection.deactivate();
         }
       }
+    },
+    removeHoverToSelectListeners() {
+      if (!devtools) return;
+      devtools
+        .Konva()
+        .stages[0].off("mouseover", devtools.selection.selectShapeAtCursor);
+      devtools
+        .Konva()
+        .stages[0].off(
+          "click",
+          devtools.selection.removeHoverToSelectListeners
+        );
+      devtools.selection.deactivate();
     },
   };
 }

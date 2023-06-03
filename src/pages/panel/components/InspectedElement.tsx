@@ -26,9 +26,11 @@ export default function InspectedElement({ selectedNode }: IProps) {
 
   const updateAttr = async (attrName: string, val: any) => {
     await bridge(
-      `__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.updateAttrs(${JSON.stringify({
-        [attrName]: val,
-      })})`
+      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.updateAttrs(${JSON.stringify(
+        {
+          [attrName]: val,
+        }
+      )})`
     );
     setNodeAttrs((current) => ({
       ...current,
@@ -37,6 +39,12 @@ export default function InspectedElement({ selectedNode }: IProps) {
   };
 
   const attrs = selectedNode?.isShape ? SHAPE_ATTRS : ATTRS;
+
+  const copyToClipBoard = () => {
+    bridge(
+      `window.copy(window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selected().attrs)`
+    );
+  };
 
   return (
     <>
@@ -54,7 +62,11 @@ export default function InspectedElement({ selectedNode }: IProps) {
           <div className="attributes">
             <div className="header-row">
               <div className="header">Attributes</div>
-              <button className="button">
+              <button
+                className="button"
+                title="Copy Attributes to Clipboard"
+                onClick={() => copyToClipBoard()}
+              >
                 <span className="button-content" tabIndex={-1}>
                   <CopyToClipboard />
                 </span>

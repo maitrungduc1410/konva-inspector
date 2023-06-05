@@ -39,7 +39,8 @@ export default function Element({
   };
 
   const shouldHighlight =
-    searchText.length && node.className.startsWith(searchText);
+    searchText.length &&
+    node.className.toLowerCase().startsWith(searchText.toLowerCase());
   return (
     <>
       <div

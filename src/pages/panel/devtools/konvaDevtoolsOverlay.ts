@@ -24,20 +24,50 @@ export default function konvaDevtoolsOverlay(devtools: KonvaDevtools) {
 
     overlayEl = document.createElement("div");
     overlayEl.style.backgroundColor = "rgba(0, 161, 255, 0.3)";
+    overlayEl.style.zIndex = "99999999999";
+    overlayEl.style.fontFamily =
+      "SFMono-Regular, Consolas, Liberation Mono, Menlo, Courier, monospace";
     Object.assign(overlayEl.style, {
       ...position("0", "0", "0", "0"),
       pointerEvents: "none",
       transformOrigin: "top left",
     });
 
+    const tooltip = document.createElement("div");
+    tooltip.style.backgroundColor = "rgba(0, 0, 0, 0.8)";
+    tooltip.style.position = "absolute";
+    tooltip.style.top = "-35px";
+    tooltip.style.left = "0";
+    tooltip.style.display = "flex";
+    tooltip.style.gap = "5px";
+    tooltip.style.color = "white";
+    tooltip.style.padding = "4px 8px";
+    tooltip.style.borderRadius = "4px";
+    tooltip.style.width = "max-content";
+
+    const leftTooltip = document.createElement("div");
+    leftTooltip.style.color = "#61dafb";
+
+    const separator = document.createElement("div");
+    separator.textContent = "|";
+
+    const rightTooltip = document.createElement("div");
+
+    tooltip.append(leftTooltip);
+    tooltip.append(separator);
+    tooltip.append(rightTooltip);
+    overlayEl.appendChild(tooltip);
     document.body.appendChild(overlayEl);
+
     function calibrateOverlay() {
       const content = devtools.content(stageIndex);
       const contentBounds = content.getBoundingClientRect();
       const stage = devtools.stage(stageIndex);
+      const scrollX = window.pageXOffset || document.documentElement.scrollLeft;
+      const scrollY = window.pageYOffset || document.documentElement.scrollTop;
       overlayEl.style.transform = `translate(${
-        contentBounds.x + stage.x()
-      }px, ${contentBounds.y + stage.y()}px)`;
+        contentBounds.x + stage.x() + scrollX
+      }px, ${contentBounds.y + stage.y() + scrollY}px)`;
     }
 
     let throttle = 0;
@@ -51,6 +81,13 @@ export default function konvaDevtoolsOverlay(devtools: KonvaDevtools) {
       overlayEl.style.left = rect.x.toString() + "px";
       overlayEl.style.width = rect.width.toString() + "px";
       overlayEl.style.height = rect.height.toString() + "px";
+
+      leftTooltip.textContent = node.getClassName();
+      rightTooltip.textContent = `${rect.width.toFixed(
+        2
+      )}px x ${rect.height.toFixed(2)}px (${rect.x.toFixed(
+        2
+      )}, ${rect.y.toFixed(2)})`;
 
       if (throttle <= 0) {
         calibrateOverlay();

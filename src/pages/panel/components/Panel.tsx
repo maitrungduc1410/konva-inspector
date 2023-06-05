@@ -19,6 +19,7 @@ const Panel: React.FC = () => {
   const [alwaysInspect, setAlwaysInspect] = useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
 
+  // Handle dark theme
   useEffect(() => {
     chrome.storage.session.get(["isDarkMode"]).then((res) => {
       if ("isDarkMode" in res) {
@@ -31,6 +32,7 @@ const Panel: React.FC = () => {
     });
   }, []);
 
+  // handle tree
   useEffect(() => {
     getStageTree();
 
@@ -43,6 +45,7 @@ const Panel: React.FC = () => {
     };
   }, []);
 
+  // handle host app reload
   useEffect(() => {
     function handleReload() {
       setTrees([]);
@@ -59,6 +62,7 @@ const Panel: React.FC = () => {
     };
   }, []);
 
+  // handle always inspect
   useEffect(() => {
     if (alwaysInspect) {
       // TODO: handle multi stages
@@ -125,7 +129,9 @@ const Panel: React.FC = () => {
     setActiveNode(data);
     if (data) {
       alwaysInspect &&
-        document.getElementById(data._id.toString()).scrollIntoView();
+        document.getElementById(data._id.toString()).scrollIntoView({
+          behavior: "smooth",
+        });
     } else {
       setAlwaysInspect(false);
     }

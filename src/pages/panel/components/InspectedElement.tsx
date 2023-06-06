@@ -109,7 +109,7 @@ export default function InspectedElement({ selectedNode }: IProps) {
                           updateAttr(
                             item.name,
                             isNaN(e.target.valueAsNumber)
-                              ? ""
+                              ? null // JSON.stringify will not preserve undefined, so we have to use null here
                               : e.target.valueAsNumber
                           )
                         }

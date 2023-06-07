@@ -4,6 +4,7 @@ import { KonvaDevtools, OutlineNode } from "../types";
 export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
   let activeNode: Konva.Container;
   let selectedNode: Konva.Container;
+  let alwaysInspect = false;
 
   return {
     active(serialize = false): Konva.Node | OutlineNode | undefined {
@@ -31,6 +32,8 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
       ) as Konva.Container;
       activeNode = n;
 
+      // we need to clear before connect to make sure it works in case of multi stages
+      devtools.overlay.clear();
       devtools.overlay.connect(stageIndex);
     },
     deactivate() {
@@ -40,31 +43,62 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
     updateAttrs(attrs: any) {
       selectedNode.setAttrs(attrs);
     },
+    registerMouseOverEvents() {
+      // we check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
+      if (devtools.Konva()) {
+        for (const stage of devtools.Konva().stages) {
+          stage.content.addEventListener(
+            "mouseleave",
+            devtools.selection.deactivateOnMouseLeaveWhenAlwaysInspect
+          );
+          stage.on("mouseover", devtools.selection.selectShapeAtCursor);
+          stage.on("click", devtools.selection.removeHoverToSelectListeners);
+        }
+        1; // add this line so that it'll be returned when evaluation, otherwise it'll throw error because the evaluation returns object class
+      }
+    },
+    unregisterMouseOverEvents() {
+      // we check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
+      if (devtools.Konva()) {
+        for (const stage of devtools.Konva().stages) {
+          stage.content.removeEventListener(
+            "mouseleave",
+            devtools.selection.deactivateOnMouseLeaveWhenAlwaysInspect
+          );
+          stage.off("mouseover", devtools.selection.selectShapeAtCursor);
+          stage.off("click", devtools.selection.removeHoverToSelectListeners);
+        }
+        1; // add this line so that it'll be returned when evaluation, otherwise it'll throw error because the evaluation returns object class
+      }
+    },
+    deactivateOnMouseLeaveWhenAlwaysInspect(e) {
+      devtools.selection.deactivate();
+    },
     selectShapeAtCursor() {
-      // TODO: handle multi stages
-      const stage = devtools.Konva().stages[0];
-      const pointerPosition = stage.getPointerPosition();
-      if (pointerPosition) {
-        const node = stage.getIntersection(pointerPosition);
-        if (node) {
-          devtools.selection.activate(node._id);
-        } else {
-          devtools.selection.deactivate();
+      for (const [index, stage] of devtools.Konva().stages.entries()) {
+        const pointerPosition = stage.getPointerPosition();
+        if (pointerPosition) {
+          const node = stage.getIntersection(pointerPosition);
+          if (node) {
+            devtools.selection.activate(node._id, index);
+          }
         }
       }
     },
     removeHoverToSelectListeners() {
       if (!devtools) return;
-      devtools
-        .Konva()
-        .stages[0].off("mouseover", devtools.selection.selectShapeAtCursor);
-      devtools
-        .Konva()
-        .stages[0].off(
-          "click",
-          devtools.selection.removeHoverToSelectListeners
-        );
+      for (const stage of devtools.Konva().stages) {
+        stage.off("mouseover", devtools.selection.selectShapeAtCursor);
+        stage.off("click", devtools.selection.removeHoverToSelectListeners);
+      }
       devtools.selection.deactivate();
+      devtools.selection.setAlwaysInspect(false);
+    },
+    setAlwaysInspect(value: boolean) {
+      alwaysInspect = value;
+    },
+    getAlwaysInspect() {
+      return alwaysInspect;
     },
   };
 }

@@ -65,16 +65,9 @@ const Panel: React.FC = () => {
   // handle always inspect
   useEffect(() => {
     if (alwaysInspect) {
-      // TODO: handle multi stages
-      // below we have && 1, to make the evaluation return a number
-      // otherwise it'll return a Stage instance and the bridge will fail
-      // we also check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
       bridge(`
         window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ &&
-        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() &&
-        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva().stages[0].on("mouseover", window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selectShapeAtCursor) && 
-        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva().stages[0].on("click", window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.removeHoverToSelectListeners) && 1
-      `);
+        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.registerMouseOverEvents()`);
 
       const interval = setInterval(async () => {
         getActiveNode();
@@ -83,16 +76,9 @@ const Panel: React.FC = () => {
       return () => {
         clearInterval(interval);
 
-        // TODO: handle multi stages
-        // below we need to assign result to a const
-        // otherwise it'll return a Stage instance and the bridge will fail
-        // we also check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
         bridge(`
         window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ &&
-        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() &&
-        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva().stages[0].off("mouseover", window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selectShapeAtCursor) &&
-        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva().stages[0].off("click", window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.removeHoverToSelectListeners) && 1
-      `);
+        window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.unregisterMouseOverEvents()`);
       };
     }
   }, [alwaysInspect]);
@@ -132,9 +118,13 @@ const Panel: React.FC = () => {
         document.getElementById(data._id.toString()).scrollIntoView({
           behavior: "smooth",
         });
-    } else {
-      setAlwaysInspect(false);
     }
+
+    const shouldAlwaysInspect = await bridge<boolean>(
+      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.getAlwaysInspect()`
+    );
+
+    setAlwaysInspect(shouldAlwaysInspect);
   };
 
   const toggleTheme = (isDark: boolean) => {
@@ -157,7 +147,12 @@ const Panel: React.FC = () => {
           <div className="v-rule"></div>
           <button
             className={alwaysInspect ? "toggle-on" : "toggle-off"}
-            onClick={() => setAlwaysInspect((cur) => !cur)}
+            onClick={() => {
+              setAlwaysInspect((cur) => !cur);
+              bridge(
+                `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.setAlwaysInspect(true)`
+              );
+            }}
           >
             <span className="toggle-content" tabIndex={-1}>
               <ToggleOff />
@@ -180,19 +175,21 @@ const Panel: React.FC = () => {
             </span>
           </button>
         </div>
-        {trees.map((item, index) => (
-          <div className="tree" key={`tree-${index}`}>
-            <Element
-              searchText={searchText}
-              selectedNode={selectedNode}
-              activeNode={activeNode}
-              stageIndex={index}
-              indent={0}
-              node={item}
-              onSelectNode={(data) => setSelectedNode(data)}
-            />
-          </div>
-        ))}
+        <div className="trees">
+          {trees.map((item, index) => (
+            <div className="tree" key={`tree-${index}`}>
+              <Element
+                searchText={searchText}
+                selectedNode={selectedNode}
+                activeNode={activeNode}
+                stageIndex={index}
+                indent={0}
+                node={item}
+                onSelectNode={(data) => setSelectedNode(data)}
+              />
+            </div>
+          ))}
+        </div>
       </div>
       <div className="inspected-element">
         <InspectedElement selectedNode={selectedNode} />

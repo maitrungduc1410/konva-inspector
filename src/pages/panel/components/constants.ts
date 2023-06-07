@@ -44,6 +44,10 @@ export const ATTRS = [
     type: "number",
   },
   {
+    name: "rotateEnabled",
+    type: "boolean",
+  },
+  {
     name: "rotation",
     type: "number",
   },

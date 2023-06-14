@@ -2,6 +2,13 @@ import type Konva from "konva";
 import { KonvaDevtools } from "../types";
 
 export default function konvaDevtoolsOverlay(devtools: KonvaDevtools) {
+  function formatNumber(
+    num: number,
+    options: Intl.NumberFormatOptions = { maximumFractionDigits: 2 }
+  ) {
+    return num ? new Intl.NumberFormat(undefined, options).format(num) : 0;
+  }
+
   function position(
     x: string,
     y: string,
@@ -48,6 +55,9 @@ export default function konvaDevtoolsOverlay(devtools: KonvaDevtools) {
     const leftTooltip = document.createElement("div");
     leftTooltip.style.color = "#61dafb";
 
+    const _idText = document.createElement("div");
+    _idText.style.color = "#ef6632";
+
     const separator = document.createElement("div");
     separator.textContent = "|";
 
@@ -55,6 +65,8 @@ export default function konvaDevtoolsOverlay(devtools: KonvaDevtools) {
 
     tooltip.append(leftTooltip);
     tooltip.append(separator);
+    tooltip.append(_idText);
+    tooltip.append(separator.cloneNode(true));
     tooltip.append(rightTooltip);
     overlayEl.appendChild(tooltip);
     document.body.appendChild(overlayEl);
@@ -82,11 +94,12 @@ export default function konvaDevtoolsOverlay(devtools: KonvaDevtools) {
       overlayEl.style.height = rect.height.toString() + "px";
 
       leftTooltip.textContent = node.getClassName();
-      rightTooltip.textContent = `${rect.width.toFixed(
-        2
-      )}px x ${rect.height.toFixed(2)}px (${rect.x.toFixed(
-        2
-      )}, ${rect.y.toFixed(2)})`;
+      _idText.textContent = `_id=${node._id.toString()}`;
+      rightTooltip.textContent = `${formatNumber(
+        rect.width
+      )}px x ${formatNumber(rect.height)}px (${formatNumber(
+        rect.x
+      )}, ${formatNumber(rect.y)})`;
 
       if (throttle <= 0) {
         calibrateOverlay();

@@ -44,6 +44,7 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
         !devtools.Konva().Util._isPlainObject(val) &&
         !devtools.Konva().Util._isArray(val);
       if (nonPlainObject) {
+        obj.attrs[key] = "<NON_PLAIN_OBJECT>";
         continue;
       }
       getter = typeof this[key] === "function" && this[key];

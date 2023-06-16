@@ -40,8 +40,19 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
       activeNode = undefined;
       devtools.overlay.clear();
     },
-    updateAttrs(attrs: any) {
-      selectedNode.setAttrs(attrs);
+    updateAttrs(attrs: Record<string, string | number | boolean>) {
+      const { image, ...rest } = attrs;
+      if (image) {
+        (() => {
+          const newImg = new Image();
+          newImg.onload = () => {
+            (devtools.selection.selected() as Konva.Image).image(newImg);
+          };
+          newImg.src = image as string;
+        })();
+      } else {
+        selectedNode.setAttrs(rest);
+      }
     },
     registerMouseOverEvents() {
       // we check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
@@ -71,7 +82,7 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
         1; // add this line so that it'll be returned when evaluation, otherwise it'll throw error because the evaluation returns object class
       }
     },
-    deactivateOnMouseLeaveWhenAlwaysInspect(e) {
+    deactivateOnMouseLeaveWhenAlwaysInspect() {
       devtools.selection.deactivate();
     },
     selectShapeAtCursor() {

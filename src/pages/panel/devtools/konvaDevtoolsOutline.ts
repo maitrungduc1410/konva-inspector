@@ -35,6 +35,8 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
 
     obj.attrs = {};
 
+    const className = node.getClassName();
+
     for (key in attrs) {
       val = attrs[key];
       // if value is object and object is not plain
@@ -44,7 +46,10 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
         !devtools.Konva().Util._isPlainObject(val) &&
         !devtools.Konva().Util._isArray(val);
       if (nonPlainObject) {
-        obj.attrs[key] = "<NON_PLAIN_OBJECT>";
+        if (className === "Image") {
+          obj.attrs.image = val.src;
+        }
+
         continue;
       }
       getter = typeof this[key] === "function" && this[key];
@@ -58,7 +63,7 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
       }
     }
 
-    obj.className = node.getClassName();
+    obj.className = className;
     obj._id = node._id;
     obj.isShape = node instanceof devtools.Konva().Shape;
     return devtools.Konva().Util._prepareToStringify(obj);

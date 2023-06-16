@@ -15,8 +15,8 @@ function detectFromDevtool() {
           clearInterval(detectFromDevtoolInterval);
           chrome.devtools.panels.create(
             "Konva",
-            "icon-34.png",
-            "src/pages/panel/index.html"
+            "/icon38.png",
+            "/src/pages/panel/index.html"
           );
         }
       }

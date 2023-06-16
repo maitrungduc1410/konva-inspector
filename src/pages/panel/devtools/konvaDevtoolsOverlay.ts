@@ -97,9 +97,9 @@ export default function konvaDevtoolsOverlay(devtools: KonvaDevtools) {
       _idText.textContent = `_id=${node._id.toString()}`;
       rightTooltip.textContent = `${formatNumber(
         rect.width
-      )}px x ${formatNumber(rect.height)}px (${formatNumber(
+      )}px x ${formatNumber(rect.height)}px (x: ${formatNumber(
         rect.x
-      )}, ${formatNumber(rect.y)})`;
+      )}, y: ${formatNumber(rect.y)})`;
 
       if (throttle <= 0) {
         calibrateOverlay();

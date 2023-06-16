@@ -231,11 +231,10 @@ export const SHAPE_CUSTOM_ATTRS: Record<string, IAttr[]> = {
     { name: "frameRate", type: "number", min: 0 },
   ],
   Image: [
-    // {
-    //   name: "image",
-    //   path: "image.src",
-    //   type: "string",
-    // },
+    {
+      name: "image",
+      type: "string",
+    },
     { name: "crop", type: "json" },
     {
       name: "cornerRadius",

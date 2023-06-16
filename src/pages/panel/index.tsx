@@ -38,7 +38,9 @@ function init() {
     );
   });
 
-  chrome.windows.onFocusChanged.addListener(() => {
+  // TODO: find a solution for firefox
+  // chrome.windows is not available on firefox
+  chrome.windows?.onFocusChanged.addListener(() => {
     bridge(
       "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()"
     );

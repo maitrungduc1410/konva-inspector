@@ -21,7 +21,7 @@ const Panel: React.FC = () => {
 
   // Handle dark theme
   useEffect(() => {
-    chrome.storage.session.get(["isDarkMode"]).then((res) => {
+    chrome.storage.local.get(["isDarkMode"]).then((res) => {
       if ("isDarkMode" in res) {
         setIsDarkMode(res.isDarkMode);
       } else {
@@ -128,7 +128,7 @@ const Panel: React.FC = () => {
   };
 
   const toggleTheme = (isDark: boolean) => {
-    chrome.storage.session.set({ isDarkMode: isDark }).then(() => {
+    chrome.storage.local.set({ isDarkMode: isDark }).then(() => {
       setIsDarkMode(isDark);
     });
   };

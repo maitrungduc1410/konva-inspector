@@ -28,7 +28,7 @@ function detect(requestDetectionCallback?: (data: any) => void) {
 }
 
 chrome.runtime.onMessage.addListener(function (request, sender, sendResponse) {
-  if (request["type"] == "__KONVA_DEVTOOLS__REQUEST_DETECTION") {
+  if (request["type"] === "__KONVA_DEVTOOLS__REQUEST_DETECTION") {
     detect(sendResponse);
   }
   return true; // this make sure sendResponse will work asynchronously

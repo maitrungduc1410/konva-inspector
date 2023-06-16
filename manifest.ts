@@ -3,17 +3,23 @@ import packageJson from "./package.json";
 /**
  * After changing, please reload the extension at `chrome://extensions`
  */
-const manifest: chrome.runtime.ManifestV3 = {
+const manifest: any = {
   manifest_version: 3,
   name: "KonvaJS Devtools",
   version: packageJson.version,
   description: packageJson.description,
   permissions: ["storage"],
   // options_page: "src/pages/options/index.html",
-  background: {
-    service_worker: "src/pages/background/index.js",
-    type: "module",
-  },
+  background:
+    process.env.ENV_TARGET === "firefox"
+      ? {
+          scripts: ["src/pages/background/index.js"],
+          type: "module",
+        }
+      : {
+          service_worker: "src/pages/background/index.js",
+          type: "module",
+        },
   action: {
     default_popup: "src/pages/popup/index.html",
     default_icon: "icon32_black.png",
@@ -48,5 +54,13 @@ const manifest: chrome.runtime.ManifestV3 = {
     },
   ],
 };
+
+if (process.env.ENV_TARGET === "firefox") {
+  manifest.browser_specific_settings = {
+    gecko: {
+      id: "maitrungduc1410@gmail.com",
+    },
+  };
+}
 
 export default manifest;

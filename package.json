@@ -1,6 +1,6 @@
 {
   "name": "konva-inspector",
-  "version": "0.0.10",
+  "version": "0.0.11",
   "description": "Devtools for your Konva App",
   "license": "MIT",
   "repository": {
@@ -9,10 +9,13 @@
   },
   "scripts": {
     "build": "tsc --noEmit && vite build",
+    "build:firefox": "tsc --noEmit && cross-env ENV_TARGET=firefox vite build",
     "build:watch": "cross-env __DEV__=true vite build --watch",
+    "build:watch:firefox": "cross-env ENV_TARGET=firefox npm run build:watch",
     "build:hmr": "rollup --config utils/reload/rollup.config.ts",
     "wss": "node utils/reload/initReloadServer.js",
     "dev": "npm run build:hmr && (run-p wss build:watch)",
+    "dev:firefox": "npm run build:hmr && (run-p wss build:watch:firefox)",
     "test": "jest"
   },
   "type": "module",

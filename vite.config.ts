@@ -28,7 +28,7 @@ export default defineConfig({
   },
   plugins: [
     react(),
-    makeManifest(manifest, {
+    makeManifest(manifest as any, {
       isDev,
       contentScriptCssKey: regenerateCacheInvalidationKey(),
     }),

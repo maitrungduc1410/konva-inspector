@@ -1,4 +1,4 @@
-import { Root, createRoot } from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import "@pages/panel/index.css";
 import refreshOnUpdate from "virtual:reload-on-update-in-view";
 import connect from "./devtools/connect";
@@ -21,16 +21,14 @@ const bridge: BridgeFn = (code: string) => {
   });
 };
 
-let root: Root;
 function init() {
   connect(bridge);
 
-  if (root) return;
   const appContainer = document.getElementById("app") as HTMLDivElement;
   if (!appContainer) {
     throw new Error("Can not find #app");
   }
-  root = createRoot(appContainer);
+  const root = createRoot(appContainer);
   root.render(<Panel />);
   appContainer.addEventListener("mouseleave", () => {
     bridge(

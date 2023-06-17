@@ -7,7 +7,7 @@
 <a href="https://addons.mozilla.org/vi/firefox/addon/konvajs-devtools/">Firefox Addon</a>
 </div>
 
-<div style="flex;">
+<div style="margin-top: 10px;">
   <img style="width: 40%;" src="images/screenshots/2400x1800/1.png" />
   <img style="width: 40%;" src="images/screenshots/2400x1800/2.png" />
   <img style="width: 40%;" src="images/screenshots/2400x1800/3.png" />

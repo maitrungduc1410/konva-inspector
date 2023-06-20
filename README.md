@@ -4,10 +4,12 @@
 <div>
 <a href="https://chrome.google.com/webstore/detail/konvajs-devtools/aleknfecbpmpnkfoaohgpffcjenmjjfi">Chrome Extension</a>
 &#x2022;
-<a href="https://addons.mozilla.org/vi/firefox/addon/konvajs-devtools/">Firefox Addon</a>
+<a href="https://addons.mozilla.org/vi/firefox/addon/konvajs-devtools">Firefox Addon</a>
+&#x2022;
+<a href="https://microsoftedge.microsoft.com/addons/detail/konvajs-devtools/noiamlkeehkigdfegcnnfanplidpmeaa">Edge Addon</a>
 </div>
 
-<div style="margin-top: 10px;">
+<div>
   <img style="width: 40%;" src="images/screenshots/2400x1800/1.png" />
   <img style="width: 40%;" src="images/screenshots/2400x1800/2.png" />
   <img style="width: 40%;" src="images/screenshots/2400x1800/3.png" />

@@ -19,6 +19,12 @@
 
 </div>
 
+# Features
+- [x] Support all Konva objects (Text, Image, Rect, Star, Group, Stage, Layer,....)
+- [x] Edit object attributes in place, right in the extension
+- [x] Select object by Cursor
+- [x] Dark theme supported
+- [x] Multiple stages supported
 # Develop
 To Develop the extension:
 - First clone the project

@@ -31,13 +31,12 @@ To Develop the extension:
 - Run `yarn install` or `npm install`
 - Run `yarn dev` (for Chrome/Edge) or `yarn dev:firefox` for Firefox
 
-Next drag `dist` folder to the following for the browser you're using:
+After that, a `dist` folder will be generated, next based on your browser do the following
+- Chrome: open `chrome://extensions/` and drag `dist` folder there
+- Edge: open `edge://extensions/` and drag `dist` folder there
+- Firefox: open `about:debugging#/runtime/this-firefox` > Load Temporary Add > Select any file in the `dist` folder
 
-- Chrome: `chrome://extensions/`
-- Edge: `edge://extensions/`
-- Firefox: `about:debugging#/runtime/this-firefox` > Load Temporary Add > Select any file in the `dist` folder
-
-> Note: for Firefox, to make background script + popup page work on load, right click the Konva extension icon on browser bar -> Always allow....
+> Note: for Firefox, to make background script + popup page work on load, right click the Konva extension icon on browser bar -> select "Always allow....""
 
 # Build
 To build project for publish, run `yarn build` (for Chrome/Edge) or `yarn build:firefox` for Firefox

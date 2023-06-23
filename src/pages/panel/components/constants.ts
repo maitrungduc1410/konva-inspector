@@ -1,12 +1,11 @@
 export interface IAttr {
   name: string;
-  path?: string;
   type: "string" | "number" | "boolean" | "json";
   defaultValue?: string | number | boolean;
   min?: number;
 }
 
-export const ATTRS: IAttr[] = [
+export const NODE_ATTRS: IAttr[] = [
   {
     name: "x",
     type: "number",
@@ -92,9 +91,68 @@ export const ATTRS: IAttr[] = [
 ];
 
 export const SHAPE_ATTRS: IAttr[] = [
-  ...ATTRS,
   {
     name: "fill",
+    type: "string",
+  },
+  {
+    name: "fillPatternX",
+    type: "number",
+  },
+  {
+    name: "fillPatternY",
+    type: "number",
+  },
+  {
+    name: "fillPatternOffsetX",
+    type: "number",
+  },
+  {
+    name: "fillPatternOffsetY",
+    type: "number",
+  },
+  {
+    name: "fillPatternScaleX",
+    type: "number",
+  },
+  {
+    name: "fillPatternScaleY",
+    type: "number",
+  },
+  {
+    name: "fillPatternRotation",
+    type: "number",
+  },
+  {
+    name: "fillPatternRepeat",
+    type: "string",
+  },
+  {
+    name: "fillLinearGradientStartPointX",
+    type: "number",
+  },
+  {
+    name: "fillLinearGradientStartPointY",
+    type: "number",
+  },
+  {
+    name: "fillLinearGradientEndPointX",
+    type: "number",
+  },
+  {
+    name: "fillLinearGradientEndPointY",
+    type: "number",
+  },
+  {
+    name: "fillRadialGradientColorStops",
+    type: "json",
+  },
+  {
+    name: "fillEnabled",
+    type: "boolean",
+  },
+  {
+    name: "fillPriority",
     type: "string",
   },
   {
@@ -105,6 +163,27 @@ export const SHAPE_ATTRS: IAttr[] = [
     name: "strokeWidth",
     type: "number",
     min: 0,
+  },
+  {
+    name: "fillAfterStrokeEnabled",
+    type: "boolean",
+    defaultValue: false,
+  },
+  {
+    name: "hitStrokeWidth",
+    type: "number",
+  },
+  {
+    name: "strokeScaleEnabled",
+    type: "boolean",
+  },
+  {
+    name: "strokeHitEnabled",
+    type: "boolean",
+  },
+  {
+    name: "strokeEnabled",
+    type: "boolean",
   },
   {
     name: "shadowColor",
@@ -128,6 +207,26 @@ export const SHAPE_ATTRS: IAttr[] = [
   },
   {
     name: "shadowEnabled",
+    type: "boolean",
+  },
+  {
+    name: "shadowForStrokeEnabled",
+    type: "boolean",
+  },
+  {
+    name: "dash",
+    type: "json",
+  },
+  {
+    name: "dashOffset",
+    type: "number",
+  },
+  {
+    name: "dashEnabled",
+    type: "boolean",
+  },
+  {
+    name: "perfectDrawEnabled",
     type: "boolean",
   },
 ];

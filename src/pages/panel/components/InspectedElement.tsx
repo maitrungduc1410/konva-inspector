@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { bridge } from "..";
 import { OutlineNode } from "../types";
-import { ATTRS, SHAPE_ATTRS, SHAPE_CUSTOM_ATTRS } from "./constants";
+import { NODE_ATTRS, SHAPE_ATTRS, SHAPE_CUSTOM_ATTRS } from "./constants";
 import Attributes from "./Attributes";
+import SearchIcon from "./SearchIcon";
 
 interface IProps {
   selectedNode: OutlineNode | null;
@@ -12,6 +13,7 @@ export default function InspectedElement({ selectedNode }: IProps) {
   // we create a state to store attrs to provide smooth update when we change attrs
   // otherwise if rely on "selectedNode" interval to update will make it looks laggy
   const [nodeAttrs, setNodeAttrs] = useState<Record<string, any>>({});
+  const [attrSearch, setAttrSearch] = useState<string>("");
 
   useEffect(() => {
     if (selectedNode) {
@@ -35,8 +37,6 @@ export default function InspectedElement({ selectedNode }: IProps) {
     }));
   };
 
-  const attrs = selectedNode?.isShape ? SHAPE_ATTRS : ATTRS;
-
   return (
     <>
       <div className="title-row">
@@ -48,11 +48,23 @@ export default function InspectedElement({ selectedNode }: IProps) {
           </>
         )}
       </div>
+      {selectedNode && (
+        <div className="search-input-item">
+          <SearchIcon />
+          <input
+            className="input"
+            placeholder="Search attributes..."
+            value={attrSearch}
+            onChange={(e) => setAttrSearch(e.target.value)}
+          />
+        </div>
+      )}
       <div className="inspected-element-data">
         {selectedNode && (
           <>
             {SHAPE_CUSTOM_ATTRS[selectedNode.className] && (
               <Attributes
+                attrSearch={attrSearch}
                 title={`${selectedNode.className} Attributes`}
                 attrs={SHAPE_CUSTOM_ATTRS[selectedNode.className]}
                 nodeAttrs={nodeAttrs}
@@ -61,9 +73,20 @@ export default function InspectedElement({ selectedNode }: IProps) {
               />
             )}
 
+            {selectedNode?.isShape && (
+              <Attributes
+                attrSearch={attrSearch}
+                title="Shape Attributes"
+                attrs={SHAPE_ATTRS}
+                nodeAttrs={nodeAttrs}
+                updateAttr={updateAttr}
+              />
+            )}
+
             <Attributes
-              title="Attributes"
-              attrs={attrs}
+              attrSearch={attrSearch}
+              title="Node Attributes"
+              attrs={NODE_ATTRS}
               nodeAttrs={nodeAttrs}
               updateAttr={updateAttr}
             />

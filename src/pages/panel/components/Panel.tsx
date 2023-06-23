@@ -83,6 +83,22 @@ const Panel: React.FC = () => {
     }
   }, [alwaysInspect]);
 
+  useEffect(() => {
+    function handleMouseLeave() {
+      bridge(
+        "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()"
+      );
+    }
+    const inspectedTree = document.getElementById(
+      "inspected-trees"
+    ) as HTMLDivElement;
+    inspectedTree.addEventListener("mouseleave", handleMouseLeave);
+
+    return () => {
+      inspectedTree.removeEventListener("mouseleave", handleMouseLeave);
+    };
+  }, []);
+
   const getStageTree = async () => {
     try {
       const data = await bridge<OutlineNode[]>(
@@ -116,7 +132,9 @@ const Panel: React.FC = () => {
     if (data) {
       alwaysInspect &&
         document.getElementById(data._id.toString()).scrollIntoView({
-          behavior: "smooth",
+          behavior: "auto",
+          block: "center",
+          inline: "center",
         });
     }
 
@@ -175,9 +193,9 @@ const Panel: React.FC = () => {
             </span>
           </button>
         </div>
-        <div className="trees">
+        <div id="inspected-trees" className="trees">
           {trees.map((item, index) => (
-            <div className="tree" key={`tree-${index}`}>
+            <div className="tree-item" key={`tree-item-${index}`}>
               <Element
                 searchText={searchText}
                 selectedNode={selectedNode}

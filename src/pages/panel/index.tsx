@@ -30,11 +30,6 @@ function init() {
   }
   const root = createRoot(appContainer);
   root.render(<Panel />);
-  appContainer.addEventListener("mouseleave", () => {
-    bridge(
-      "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()"
-    );
-  });
 
   // TODO: find a solution for firefox
   // chrome.windows is not available on firefox

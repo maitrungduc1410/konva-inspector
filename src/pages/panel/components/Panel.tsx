@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./Panel.scss";
 import Element from "./Element";
 import { bridge } from "..";
@@ -18,6 +18,7 @@ const Panel: React.FC = () => {
   const [searchText, setSearchText] = useState<string>("");
   const [alwaysInspect, setAlwaysInspect] = useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
+  const isMouseOverTreeViewRef = useRef<boolean>(false);
 
   // Handle dark theme
   useEffect(() => {
@@ -70,12 +71,13 @@ const Panel: React.FC = () => {
         window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.registerMouseOverEvents()`);
 
       const interval = setInterval(async () => {
-        getActiveNode();
+        if (!isMouseOverTreeViewRef.current) {
+          getActiveNode();
+        }
       }, 500);
 
       return () => {
         clearInterval(interval);
-
         bridge(`
         window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ &&
         window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.unregisterMouseOverEvents()`);
@@ -88,14 +90,20 @@ const Panel: React.FC = () => {
       bridge(
         "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()"
       );
+      isMouseOverTreeViewRef.current = false;
+    }
+    function handleMouseOver() {
+      isMouseOverTreeViewRef.current = true;
     }
     const inspectedTree = document.getElementById(
       "inspected-trees"
     ) as HTMLDivElement;
     inspectedTree.addEventListener("mouseleave", handleMouseLeave);
+    inspectedTree.addEventListener("mouseover", handleMouseOver);
 
     return () => {
       inspectedTree.removeEventListener("mouseleave", handleMouseLeave);
+      inspectedTree.removeEventListener("mouseover", handleMouseOver);
     };
   }, []);
 
@@ -167,9 +175,6 @@ const Panel: React.FC = () => {
             className={alwaysInspect ? "toggle-on" : "toggle-off"}
             onClick={() => {
               setAlwaysInspect((cur) => !cur);
-              bridge(
-                `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.setAlwaysInspect(true)`
-              );
             }}
           >
             <span className="toggle-content" tabIndex={-1}>
@@ -203,7 +208,11 @@ const Panel: React.FC = () => {
                 stageIndex={index}
                 indent={0}
                 node={item}
-                onSelectNode={(data) => setSelectedNode(data)}
+                onSelectNode={(data) => {
+                  setSelectedNode(data);
+                  setAlwaysInspect(false);
+                  setActiveNode(null); // because next interval may not run yet, so we need to set this to make sure active node is null
+                }}
               />
             </div>
           ))}

@@ -1,6 +1,6 @@
 {
   "name": "konva-inspector",
-  "version": "0.0.12",
+  "version": "0.0.13",
   "description": "Devtools for your Konva App",
   "license": "MIT",
   "repository": {

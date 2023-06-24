@@ -8,7 +8,8 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
   let alwaysInspect = false;
 
   // memoize handler so that we can remove it later
-  let handlers = {};
+  // note: do not clear handlers after unregisterMouseOverEvents, otherwise we'll lost reference to remove and the toggle button from React won't work anymore
+  const handlers = {};
 
   return {
     active(serialize = false): Konva.Node | OutlineNode | undefined {
@@ -44,7 +45,6 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
     deactivate() {
       activeNode = undefined;
       activeNodeStageIndex = null;
-      handlers = {};
       devtools.overlay.clear();
     },
     updateAttrs(attrs: Record<string, string | number | boolean>) {
@@ -75,6 +75,7 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
           );
           stage.on("click", devtools.selection.unregisterMouseOverEvents);
         }
+        devtools.selection.setAlwaysInspect(true);
         1; // add this line so that it'll be returned when evaluation, otherwise it'll throw error because the evaluation returns object class
       }
     },

@@ -105,8 +105,7 @@ body {
       fill: currentColor;
     }
     .input {
-      flex: 1 1 100px;
-      width: 100px;
+      flex: 1;
       font-size: var(--font-size-sans-large);
       outline: none;
       border: none;
@@ -249,13 +248,14 @@ body {
     .search-input-item {
       padding: 0.25rem;
       border-bottom: 1px solid var(--color-border);
+      height: 20px;
     }
 
     .inspected-element-data {
       overflow-y: auto;
       height: calc(
-        100% - 42px - 3px
-      ); // add 3px as buffer for better scrollbar visibility
+        100% - 42px - (20px + 0.5rem) - 3px
+      ); // add 3px as buffer for better scrollbar visibility, (20px + 0.5rem) is for the search attr input
       .header-row {
         display: flex;
         align-items: center;

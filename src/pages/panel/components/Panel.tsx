@@ -10,6 +10,8 @@ import connect from "../devtools/connect";
 import logoIcon from "@assets/images/icon128.png";
 import Sun from "./icons/Sun";
 import Moon from "./icons/Moon";
+import { Allotment } from "allotment";
+import "allotment/dist/style.css";
 
 const Panel: React.FC = () => {
   const [trees, setTrees] = useState<OutlineNode[]>([]);
@@ -161,66 +163,75 @@ const Panel: React.FC = () => {
 
   return (
     <div className={`components ${isDarkMode ? "dark" : "light"}`}>
-      <div className="tree-list">
-        <div className="search-input">
-          <a
-            href="https://github.com/maitrungduc1410/konva-inspector"
-            target="_blank"
-            rel="noreferrer"
-          >
-            <img src={logoIcon} width={28} />
-          </a>
-          <div className="v-rule"></div>
-          <button
-            className={alwaysInspect ? "toggle-on" : "toggle-off"}
-            onClick={() => {
-              setAlwaysInspect((cur) => !cur);
-            }}
-          >
-            <span className="toggle-content" tabIndex={-1}>
-              <ToggleOff />
-            </span>
-          </button>
-          <div className="v-rule"></div>
-          <div className="search-input-item">
-            <SearchIcon />
-            <input
-              className="input"
-              placeholder="Search (text or /regex/)"
-              value={searchText}
-              onChange={(e) => setSearchText(e.target.value)}
-            />
-          </div>
-          <div className="v-rule"></div>
-          <button className="button" onClick={() => toggleTheme(!isDarkMode)}>
-            <span className="button-content" tabIndex={-1}>
-              {isDarkMode ? <Sun /> : <Moon />}
-            </span>
-          </button>
-        </div>
-        <div id="inspected-trees" className="trees">
-          {trees.map((item, index) => (
-            <div className="tree-item" key={`tree-item-${index}`}>
-              <Element
-                searchText={searchText}
-                selectedNode={selectedNode}
-                activeNode={activeNode}
-                stageIndex={index}
-                indent={0}
-                node={item}
-                onSelectNode={(data) => {
-                  setSelectedNode(data);
-                  setAlwaysInspect(false);
-                  setActiveNode(null); // because next interval may not run yet, so we need to set this to make sure active node is null
+      <Allotment>
+        <Allotment.Pane preferredSize={"65%"}>
+          <div className="tree-list">
+            <div className="search-input">
+              <a
+                href="https://github.com/maitrungduc1410/konva-inspector"
+                target="_blank"
+                rel="noreferrer"
+              >
+                <img src={logoIcon} width={28} />
+              </a>
+              <div className="v-rule"></div>
+              <button
+                className={alwaysInspect ? "toggle-on" : "toggle-off"}
+                onClick={() => {
+                  setAlwaysInspect((cur) => !cur);
                 }}
-              />
+              >
+                <span className="toggle-content" tabIndex={-1}>
+                  <ToggleOff />
+                </span>
+              </button>
+              <div className="v-rule"></div>
+              <div className="search-input-item">
+                <SearchIcon />
+                <input
+                  className="input"
+                  placeholder="Search (text or /regex/)"
+                  value={searchText}
+                  onChange={(e) => setSearchText(e.target.value)}
+                />
+              </div>
+              <div className="v-rule"></div>
+              <button
+                className="button"
+                onClick={() => toggleTheme(!isDarkMode)}
+              >
+                <span className="button-content" tabIndex={-1}>
+                  {isDarkMode ? <Sun /> : <Moon />}
+                </span>
+              </button>
             </div>
-          ))}
-        </div>
-      </div>
-      <div className="inspected-element">
-        <InspectedElement selectedNode={selectedNode} />
-      </div>
+            <div id="inspected-trees" className="trees">
+              {trees.map((item, index) => (
+                <div className="tree-item" key={`tree-item-${index}`}>
+                  <Element
+                    searchText={searchText}
+                    selectedNode={selectedNode}
+                    activeNode={activeNode}
+                    stageIndex={index}
+                    indent={0}
+                    node={item}
+                    onSelectNode={(data) => {
+                      setSelectedNode(data);
+                      setAlwaysInspect(false);
+                      setActiveNode(null); // because next interval may not run yet, so we need to set this to make sure active node is null
+                    }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+        </Allotment.Pane>
+        <Allotment.Pane>
+          <div className="inspected-element">
+            <InspectedElement selectedNode={selectedNode} />
+          </div>
+        </Allotment.Pane>
+      </Allotment>
     </div>
   );
 };

@@ -1,6 +1,6 @@
 import { useState } from "react";
-import DownArrow from "./DownArrow";
-import RightArrow from "./RightArrow";
+import DownArrow from "./icons/DownArrow";
+import RightArrow from "./icons/RightArrow";
 import { OutlineNode } from "../types";
 import { bridge } from "..";
 
@@ -75,6 +75,18 @@ export default function Element({
         )}
         &nbsp;<span className="key-name">_id</span>=
         <span className="key-value">{node._id}</span>
+        {node.attrs.name && (
+          <span title={node.attrs.name}>
+            &nbsp;<span className="key-name">name</span>=
+            <span className="key-value">&quot;{node.attrs.name}&quot;</span>
+          </span>
+        )}
+        {node.attrs.id && (
+          <span title={node.attrs.id}>
+            &nbsp;<span className="key-name">id</span>=
+            <span className="key-value">&quot;{node.attrs.id}&quot;</span>
+          </span>
+        )}
       </div>
       {expanded &&
         node.children?.map((item) => (

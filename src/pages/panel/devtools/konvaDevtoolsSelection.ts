@@ -1,5 +1,6 @@
 import type Konva from "konva";
-import { KonvaDevtools, OutlineNode } from "../types";
+import { Filter, KonvaDevtools, OutlineNode } from "../types";
+import { IAttr } from "../components/constants";
 
 export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
   let activeNode: Konva.Container;
@@ -10,6 +11,133 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
   // memoize handler so that we can remove it later
   // note: do not clear handlers after unregisterMouseOverEvents, otherwise we'll lost reference to remove and the toggle button from React won't work anymore
   const handlers = {};
+
+  const FILTER_RENDERERS: Array<{ name: string; values: IAttr[] }> = [
+    {
+      name: "Blur",
+      values: [{ name: "blurRadius", type: "number", min: 0 }],
+    },
+    {
+      name: "Brighten",
+      values: [
+        { name: "brightness", type: "number", min: -1, max: 1, step: 0.05 },
+      ],
+    },
+    {
+      name: "Contrast",
+      values: [{ name: "contrast", type: "number", min: -100, max: 100 }],
+    },
+    {
+      name: "Emboss",
+      values: [
+        { name: "embossStrength", type: "number", min: 0, max: 1, step: 0.1 },
+        { name: "embossWhiteLevel", type: "number", min: 0, max: 1, step: 0.1 },
+        {
+          name: "embossDirection",
+          type: "select",
+          options: [
+            { value: "top", label: "Top" },
+            { value: "top-left", label: "Top Left" },
+            { value: "top-right", label: "Top Right" },
+            { value: "left", label: "Left" },
+            { value: "right", label: "Right" },
+            { value: "bottom", label: "Bottom" },
+            { value: "bottom-left", label: "Bottom Left" },
+            { value: "bottom-right", label: "Bottom Right" },
+          ],
+        },
+        {
+          name: "embossBlend",
+          type: "boolean",
+          defaultValue: false,
+        },
+      ],
+    },
+    {
+      name: "Enhance",
+      values: [
+        { name: "enhance", type: "number", min: -1, max: 1, step: 0.01 },
+      ],
+    },
+    {
+      name: "Grayscale",
+      values: null,
+    },
+    {
+      name: "HSL",
+      values: [
+        { name: "hue", type: "number", min: 0, max: 259 },
+        { name: "saturation", type: "number", min: -2, max: 10, step: 0.5 },
+        { name: "luminance", type: "number", min: -2, max: 2, step: 0.1 },
+      ],
+    },
+    {
+      name: "HSV",
+      values: [
+        { name: "hue", type: "number", min: 0, max: 259 },
+        { name: "saturation", type: "number", min: -2, max: 10, step: 0.5 },
+        { name: "value", type: "number", min: -2, max: 2, step: 0.1 },
+      ],
+    },
+    {
+      name: "Invert",
+      values: null,
+    },
+    {
+      name: "Kaleidoscope",
+      values: [
+        { name: "kaleidoscopePower", type: "number", min: 0 },
+        { name: "kaleidoscopeAngle", type: "number", min: 0 },
+      ],
+    },
+    {
+      name: "Mask",
+      values: [{ name: "threshold", type: "number", min: 0 }],
+    },
+    {
+      name: "Noise",
+      values: [{ name: "noise", type: "number", min: 0, step: 0.1 }],
+    },
+    {
+      name: "Pixelate",
+      values: [{ name: "pixelSize", type: "number", min: 1 }],
+    },
+    {
+      name: "Posterize",
+      values: [{ name: "levels", type: "number", min: 0, max: 1, step: 0.01 }],
+    },
+    {
+      name: "RGB",
+      values: [
+        { name: "red", type: "number", min: 0, max: 256 },
+        { name: "green", type: "number", min: 0, max: 256 },
+        { name: "blue", type: "number", min: 0, max: 256 },
+      ],
+    },
+    {
+      name: "RGBA",
+      values: [
+        { name: "red", type: "number", min: 0, max: 256 },
+        { name: "green", type: "number", min: 0, max: 256 },
+        { name: "blue", type: "number", min: 0, max: 256 },
+        { name: "alpha", type: "number", min: 0, max: 1, step: 0.01 },
+      ],
+    },
+    {
+      name: "Sepia",
+      values: null,
+    },
+    {
+      name: "Solarize",
+      values: null,
+    },
+    {
+      name: "Threshold",
+      values: [
+        { name: "threshold", type: "number", min: 0, max: 1, step: 0.01 },
+      ],
+    },
+  ];
 
   return {
     active(serialize = false): Konva.Node | OutlineNode | undefined {
@@ -123,6 +251,53 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
     },
     getAlwaysInspect() {
       return alwaysInspect;
+    },
+    logSelectedToConsole() {
+      console.log(selectedNode);
+    },
+    getSelectedNodeFilters() {
+      const hostPageFilters = devtools.Konva().Filters;
+      return (
+        selectedNode.filters()?.map((item) => {
+          // because in different versions of Konva, the function name may be diff, like "Blur -> Blur2"
+          const filter = Object.keys(hostPageFilters).find(
+            (key) => item === hostPageFilters[key]
+          );
+          const renderer = FILTER_RENDERERS.find((i) => i.name === filter);
+
+          const payload: Filter = {
+            name: renderer.name,
+            values: renderer.values ? [] : null,
+          };
+          for (const value of renderer.values || []) {
+            payload.values.push({
+              value: selectedNode[value.name](),
+              renderer: value,
+            });
+          }
+          return payload;
+        }) || []
+      );
+    },
+    removeSelectedNodeFilterAtIndex(index: number) {
+      const currentFilters = selectedNode.filters();
+      currentFilters.splice(index, 1);
+      selectedNode.filters(currentFilters);
+    },
+    addFilterToSelectedNode(filter: string) {
+      if (!selectedNode.isCached()) {
+        selectedNode.cache();
+      }
+
+      const currentFilters = selectedNode.filters();
+      const newFilter = devtools.Konva().Filters[filter];
+
+      if (!currentFilters) {
+        selectedNode.filters([newFilter]);
+      } else {
+        currentFilters.push(newFilter);
+        selectedNode.filters(currentFilters);
+      }
     },
   };
 }

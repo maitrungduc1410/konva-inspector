@@ -3,7 +3,9 @@ import { bridge } from "..";
 import { OutlineNode } from "../types";
 import { NODE_ATTRS, SHAPE_ATTRS, SHAPE_CUSTOM_ATTRS } from "./constants";
 import Attributes from "./Attributes";
-import SearchIcon from "./SearchIcon";
+import SearchIcon from "./icons/SearchIcon";
+import Debug from "./icons/Debug";
+import Filters from "./Filters";
 
 interface IProps {
   selectedNode: OutlineNode | null;
@@ -42,9 +44,24 @@ export default function InspectedElement({ selectedNode }: IProps) {
       <div className="title-row">
         {selectedNode && (
           <>
-            <div className="key">_id: {selectedNode._id}</div>
-            <div className="key-arrow"></div>
-            {selectedNode.className}
+            <div className="selected-element-name">
+              <div className="key">_id: {selectedNode._id}</div>
+              <div className="key-arrow"></div>
+              {selectedNode.className}
+            </div>
+            <button
+              className="button"
+              title="Log this element to console"
+              onClick={() =>
+                bridge(
+                  `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.logSelectedToConsole()`
+                )
+              }
+            >
+              <span className="button-content" tabIndex={-1}>
+                <Debug />
+              </span>
+            </button>
           </>
         )}
       </div>
@@ -69,9 +86,11 @@ export default function InspectedElement({ selectedNode }: IProps) {
                 attrs={SHAPE_CUSTOM_ATTRS[selectedNode.className]}
                 nodeAttrs={nodeAttrs}
                 updateAttr={updateAttr}
-                custom
+                keyColor="var(--color-attribute-name)"
               />
             )}
+
+            <Filters />
 
             {selectedNode?.isShape && (
               <Attributes

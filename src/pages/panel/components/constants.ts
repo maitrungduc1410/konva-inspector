@@ -1,8 +1,13 @@
+export type InputType = "string" | "number" | "boolean" | "json" | "select";
+
 export interface IAttr {
   name: string;
-  type: "string" | "number" | "boolean" | "json";
+  type: "string" | "number" | "boolean" | "json" | "select";
   defaultValue?: string | number | boolean;
   min?: number;
+  max?: number;
+  step?: number;
+  options?: Array<{ label: string; value: any }>;
 }
 
 export const NODE_ATTRS: IAttr[] = [
@@ -42,6 +47,7 @@ export const NODE_ATTRS: IAttr[] = [
     name: "opacity",
     type: "number",
     min: 0,
+    step: 0.05,
   },
   {
     name: "scaleX",
@@ -192,6 +198,7 @@ export const SHAPE_ATTRS: IAttr[] = [
   {
     name: "shadowBlur",
     type: "number",
+    min: 0,
   },
   {
     name: "shadowOffsetX",
@@ -204,6 +211,8 @@ export const SHAPE_ATTRS: IAttr[] = [
   {
     name: "shadowOpacity",
     type: "number",
+    min: 0,
+    step: 0.05,
   },
   {
     name: "shadowEnabled",
@@ -428,3 +437,25 @@ export const SHAPE_CUSTOM_ATTRS: Record<string, IAttr[]> = {
     },
   ],
 };
+
+export const FILTER_SELECT = [
+  "Blur",
+  "Brighten",
+  "Contrast",
+  "Emboss",
+  "Enhance",
+  "Grayscale",
+  "HSL",
+  "HSV",
+  "Invert",
+  "Kaleidoscope",
+  "Mask",
+  "Noise",
+  "Pixelate",
+  "Posterize",
+  "RGB",
+  "RGBA",
+  "Sepia",
+  "Solarize",
+  "Threshold",
+];

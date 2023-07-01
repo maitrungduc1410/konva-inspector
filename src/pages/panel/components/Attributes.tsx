@@ -1,17 +1,23 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { bridge } from "..";
-import CopyToClipboard from "./CopyToClipboard";
+import CopyToClipboard from "./icons/CopyToClipboard";
 import { IAttr } from "./constants";
-import DownArrow from "./DownArrow";
-import RightArrow from "./RightArrow";
+import DownArrow from "./icons/DownArrow";
+import RightArrow from "./icons/RightArrow";
+import Delete from "./icons/Delete";
 
 interface IProps {
-  attrSearch: string;
+  attrSearch?: string;
   title: string;
   nodeAttrs: Record<string, any>;
   attrs: IAttr[];
-  custom?: boolean;
+  keyColor?: string;
+  borderDashed?: boolean;
+  showCopyToClipboard?: boolean;
+  showDelete?: boolean;
+  showExpandIcon?: boolean;
   updateAttr: (attrName: string, val: any) => Promise<void>;
+  onRemove?: () => void;
 }
 
 export default function Attributes({
@@ -19,8 +25,13 @@ export default function Attributes({
   title,
   nodeAttrs,
   attrs,
-  custom,
+  keyColor,
+  borderDashed,
+  showCopyToClipboard = true,
+  showExpandIcon = true,
+  showDelete,
   updateAttr,
+  onRemove,
 }: IProps) {
   const [expanded, setExpanded] = useState<boolean>(true);
 
@@ -33,7 +44,7 @@ export default function Attributes({
   const renderArrow = () => {
     return (
       <div
-        className="expand-collapse-toggle"
+        className={`expand-collapse-toggle ${showExpandIcon ? "" : "hidden"}`}
         onClick={() => setExpanded((v) => !v)}
       >
         {expanded ? <DownArrow /> : <RightArrow />}
@@ -41,24 +52,39 @@ export default function Attributes({
     );
   };
 
-  const filteredAttrs = attrs.filter((item) =>
-    item.name.toLowerCase().startsWith(attrSearch.toLowerCase())
-  );
+  const filteredAttrs = attrSearch
+    ? attrs.filter((item) =>
+        item.name.toLowerCase().startsWith(attrSearch.toLowerCase())
+      )
+    : attrs;
 
   return (
-    <div className="attributes">
+    <div className={`attributes ${borderDashed ? "dashed" : ""}`}>
       <div className="header-row">
         {renderArrow()}
         <div className="header">{title}</div>
-        <button
-          className="button"
-          title="Copy Attributes to Clipboard"
-          onClick={() => copyToClipBoard()}
-        >
-          <span className="button-content" tabIndex={-1}>
-            <CopyToClipboard />
-          </span>
-        </button>
+        {showCopyToClipboard && (
+          <button
+            className="button"
+            title="Copy Attributes to Clipboard"
+            onClick={() => copyToClipBoard()}
+          >
+            <span className="button-content" tabIndex={-1}>
+              <CopyToClipboard />
+            </span>
+          </button>
+        )}
+        {showDelete && (
+          <button
+            className="button"
+            title="Remove entry"
+            onClick={() => onRemove && onRemove()}
+          >
+            <span className="button-content" tabIndex={-1}>
+              <Delete />
+            </span>
+          </button>
+        )}
       </div>
       {expanded && (
         <div className="attr-list">
@@ -101,6 +127,8 @@ export default function Attributes({
                       )
                     }
                     min={item.min}
+                    max={item.max}
+                    step={item.step || 1}
                   />
                 );
                 break;
@@ -121,6 +149,23 @@ export default function Attributes({
                 );
                 break;
               }
+              case "select": {
+                input = (
+                  <select
+                    onChange={(e) => updateAttr(item.name, e.target.value)}
+                  >
+                    {item.options.map((option, index) => (
+                      <option
+                        key={`${option.label}-${index}`}
+                        value={option.value}
+                      >
+                        {option.label}
+                      </option>
+                    ))}
+                  </select>
+                );
+                break;
+              }
               default: {
                 input = (
                   <input
@@ -138,8 +183,11 @@ export default function Attributes({
             }
             return (
               <div className="attr-item" key={item.name}>
-                <span className={`item-name ${custom ? "key-name" : ""}`}>
-                  {attrSearch.length ? (
+                <span
+                  className="item-name"
+                  style={{ color: keyColor || "inherit" }}
+                >
+                  {attrSearch?.length ? (
                     <>
                       <mark className="current-highlight">
                         {item.name.slice(0, attrSearch.length)}

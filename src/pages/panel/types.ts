@@ -1,3 +1,4 @@
+import { IAttr } from "./components/constants";
 import konvaDevtools from "./devtools/konvaDevtools";
 import konvaDevtoolsOutline from "./devtools/konvaDevtoolsOutline";
 import konvaDevtoolsOverlay from "./devtools/konvaDevtoolsOverlay";
@@ -15,4 +16,14 @@ export type OutlineNode = {
   _id: number;
   isShape: boolean;
   children?: OutlineNode[];
+};
+
+export type Filter = {
+  name: string;
+  values: FilterItem[] | null;
+};
+
+export type FilterItem = {
+  value: any;
+  renderer: IAttr;
 };

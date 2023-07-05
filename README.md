@@ -22,6 +22,7 @@
 # Features
 - [x] Support all Konva objects (Text, Image, Rect, Star, Group, Stage, Layer,....)
 - [x] Edit object attributes in place, right in the extension
+- [x] Changing Filter is supported
 - [x] Select object by Cursor
 - [x] Dark theme supported
 - [x] Multiple stages supported

@@ -149,12 +149,16 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
       return serialize ? devtools.outline.toObject(selectedNode) : selectedNode;
     },
     select(_id: number, stageIndex = 0): OutlineNode {
+      if (!activeNode) {
+        return;
+      }
       const n = devtools.outline.select(
         _id,
         stageIndex,
         false
       ) as Konva.Container;
       selectedNode = n;
+
       return devtools.outline.toObject(activeNode);
     },
     activate(_id: number, stageIndex = 0) {
@@ -190,40 +194,44 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
       }
     },
     registerMouseOverEvents() {
-      // we check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
-      if (devtools.Konva()) {
-        for (const [index, stage] of devtools.Konva().stages.entries()) {
-          stage.content.addEventListener(
-            "mouseleave",
-            devtools.selection.deactivateOnMouseLeaveWhenAlwaysInspect
-          );
-          stage.on(
-            "mouseover",
-            devtools.selection.selectShapeAtCursor(stage, index)
-          );
-          stage.on("click", devtools.selection.unregisterMouseOverEvents);
-        }
-        devtools.selection.setAlwaysInspect(true);
-        1; // add this line so that it'll be returned when evaluation, otherwise it'll throw error because the evaluation returns object class
+      // always check this to make sure Konva is still presented in host page
+      if (!devtools.Konva()) {
+        return;
       }
+      // we check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
+      for (const [index, stage] of devtools.Konva().stages.entries()) {
+        stage.content.addEventListener(
+          "mouseleave",
+          devtools.selection.deactivateOnMouseLeaveWhenAlwaysInspect
+        );
+        stage.on(
+          "mouseover",
+          devtools.selection.selectShapeAtCursor(stage, index)
+        );
+        stage.on("click", devtools.selection.unregisterMouseOverEvents);
+      }
+      devtools.selection.setAlwaysInspect(true);
+      1; // add this line so that it'll be returned when evaluation, otherwise it'll throw error because the evaluation returns object class
     },
     unregisterMouseOverEvents() {
+      // always check this to make sure Konva is still presented in host page
+      if (!devtools.Konva()) {
+        return;
+      }
       // we check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
-      if (devtools.Konva()) {
-        for (const [index, stage] of devtools.Konva().stages.entries()) {
-          stage.content.removeEventListener(
-            "mouseleave",
-            devtools.selection.deactivateOnMouseLeaveWhenAlwaysInspect
-          );
-          stage.off(
-            "mouseover",
-            devtools.selection.selectShapeAtCursor(stage, index)
-          );
-          stage.off("click", devtools.selection.unregisterMouseOverEvents);
-        }
-        if (activeNode) {
-          devtools.selection.select(activeNode._id, activeNodeStageIndex);
-        }
+      for (const [index, stage] of devtools.Konva().stages.entries()) {
+        stage.content.removeEventListener(
+          "mouseleave",
+          devtools.selection.deactivateOnMouseLeaveWhenAlwaysInspect
+        );
+        stage.off(
+          "mouseover",
+          devtools.selection.selectShapeAtCursor(stage, index)
+        );
+        stage.off("click", devtools.selection.unregisterMouseOverEvents);
+      }
+      if (activeNode) {
+        devtools.selection.select(activeNode._id, activeNodeStageIndex);
         devtools.selection.deactivate();
         devtools.selection.setAlwaysInspect(false);
         1; // add this line so that it'll be returned when evaluation, otherwise it'll throw error because the evaluation returns object class
@@ -256,6 +264,10 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
       console.log(selectedNode);
     },
     getSelectedNodeFilters() {
+      // always check this to make sure Konva is still presented in host page
+      if (!devtools.Konva()) {
+        return [];
+      }
       const hostPageFilters = devtools.Konva().Filters;
       return (
         selectedNode.filters()?.map((item) => {

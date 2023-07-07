@@ -73,7 +73,7 @@ export default function Element({
         ) : (
           <>{node.className}</>
         )}
-        &nbsp;<span className="key-name">_id</span>=
+        &nbsp;<span style={{ color: "var(--color-id-key)" }}>_id</span>=
         <span className="key-value">{node._id}</span>
         {node.attrs.name && (
           <span title={node.attrs.name}>

@@ -47,6 +47,7 @@ body {
     --color-component-badge-background-inverted: rgba(0, 0, 0, 0.25);
     --color-button-active: #61dafb;
     --color-filter-key: #EAB2A0;
+    --color-id-key: #ff8400;
   }
 
   &.light {
@@ -75,6 +76,7 @@ body {
     --color-component-badge-background-inverted: rgba(255, 255, 255, 0.25);
     --color-button-active: #0088fa;
     --color-filter-key: #2E8A99;
+    --color-id-key: #1182cd;
   }
 
   position: relative;

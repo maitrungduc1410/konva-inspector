@@ -45,7 +45,9 @@ export default function InspectedElement({ selectedNode }: IProps) {
         {selectedNode && (
           <>
             <div className="selected-element-name">
-              <div className="key">_id: {selectedNode._id}</div>
+              <div className="key" style={{ color: "var(--color-id-key)" }}>
+                _id: {selectedNode._id}
+              </div>
               <div className="key-arrow"></div>
               {selectedNode.className}
             </div>

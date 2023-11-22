@@ -29,8 +29,9 @@
 # Develop
 To Develop the extension:
 - First clone the project
-- Run `yarn install` or `npm install`
-- Run `yarn dev` (for Chrome/Edge) or `yarn dev:firefox` for Firefox
+- Install `pnpm` globally: `npm install -g pnpm`
+- Run `pnpm install`
+- Run `npm run dev` (for Chrome/Edge) or `npm run dev:firefox` for Firefox
 
 After that, a `dist` folder will be generated, next based on your browser do the following
 - Chrome: open `chrome://extensions/` and drag `dist` folder there
@@ -40,7 +41,7 @@ After that, a `dist` folder will be generated, next based on your browser do the
 > Note: for Firefox, to make background script + popup page work on load, right click the Konva extension icon on browser bar -> select "Always allow....""
 
 # Build
-To build project for publish, run `yarn build` (for Chrome/Edge) or `yarn build:firefox` for Firefox
+To build project for publish, run `npm run build` (for Chrome/Edge) or `npm run build:firefox` for Firefox
 
 # Architecture
 ## Overview

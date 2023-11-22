@@ -54,9 +54,9 @@ To build project for publish, run `yarn build` (for Chrome/Edge) or `yarn build:
 | popup             | [pages/popup/index.tsx](src/pages/popup/index.tsx)         | React UI for popup page, on click the icon to open the popup page, we send a message to content_script to request detect immediately                                                                                                                                                                                                                    | ![ alt text ]( images/popup_page.png   "Popup page" )                   |
 
 ## Panel architecture
-Panel is jsut a normal React app that renders detected Konva element tree except it has 2 extra parts:
+Panel is just a normal React app that renders detected Konva element tree except it has 2 extra parts:
 - [devtools](src/pages/panel/devtools/connect.ts): global variables that will be injected to host page at runtime
-- [bridge function](src/pages/panel/index.tsx): a function to run execute JS code at host page, it's just a wrapper of `chrome.devtools.inspectedWindow.eval` that returns a Promise
+- [bridge function](src/pages/panel/index.tsx): a function to execute JS code at host page, it's just a wrapper of `chrome.devtools.inspectedWindow.eval` that returns a Promise
 
 
 The `devtools` will inject the follow global variables to host page:

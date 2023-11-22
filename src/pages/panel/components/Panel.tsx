@@ -1,35 +1,35 @@
-import React, { useEffect, useRef, useState } from "react";
-import "./Panel.scss";
-import Element from "./Element";
-import { bridge } from "..";
-import { OutlineNode } from "../types";
-import InspectedElement from "./InspectedElement";
-import ToggleOff from "./icons/ToggleOff";
-import SearchIcon from "./icons/SearchIcon";
-import connect from "../devtools/connect";
-import logoIcon from "@assets/images/icon128.png";
-import Sun from "./icons/Sun";
-import Moon from "./icons/Moon";
-import { Allotment } from "allotment";
-import "allotment/dist/style.css";
+import React, { useEffect, useRef, useState } from 'react';
+import './Panel.scss';
+import Element from './Element';
+import { bridge } from '..';
+import { OutlineNode } from '../types';
+import InspectedElement from './InspectedElement';
+import ToggleOff from './icons/ToggleOff';
+import SearchIcon from './icons/SearchIcon';
+import connect from '../devtools/connect';
+import logoIcon from '@assets/images/icon128.png';
+import Sun from './icons/Sun';
+import Moon from './icons/Moon';
+import { Allotment } from 'allotment';
+import 'allotment/dist/style.css';
 
 const Panel: React.FC = () => {
   const [trees, setTrees] = useState<OutlineNode[]>([]);
   const [selectedNode, setSelectedNode] = useState<OutlineNode | null>(null);
   const [activeNode, setActiveNode] = useState<OutlineNode | null>(null);
-  const [searchText, setSearchText] = useState<string>("");
+  const [searchText, setSearchText] = useState<string>('');
   const [alwaysInspect, setAlwaysInspect] = useState<boolean>(false);
   const [isDarkMode, setIsDarkMode] = useState<boolean>(false);
   const isMouseOverTreeViewRef = useRef<boolean>(false);
 
   // Handle dark theme
   useEffect(() => {
-    chrome.storage.local.get(["isDarkMode"]).then((res) => {
-      if ("isDarkMode" in res) {
+    chrome.storage.local.get(['isDarkMode']).then(res => {
+      if ('isDarkMode' in res) {
         setIsDarkMode(res.isDarkMode);
       } else {
         // default to system theme
-        const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+        const darkThemeMq = window.matchMedia('(prefers-color-scheme: dark)');
         setIsDarkMode(darkThemeMq.matches);
       }
     });
@@ -53,7 +53,7 @@ const Panel: React.FC = () => {
     function handleReload() {
       setTrees([]);
       setSelectedNode(null);
-      setSearchText("");
+      setSearchText('');
       setAlwaysInspect(false);
       connect(bridge);
     }
@@ -89,30 +89,26 @@ const Panel: React.FC = () => {
 
   useEffect(() => {
     function handleMouseLeave() {
-      bridge(
-        "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()"
-      );
+      bridge('window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()');
       isMouseOverTreeViewRef.current = false;
     }
     function handleMouseOver() {
       isMouseOverTreeViewRef.current = true;
     }
-    const inspectedTree = document.getElementById(
-      "inspected-trees"
-    ) as HTMLDivElement;
-    inspectedTree.addEventListener("mouseleave", handleMouseLeave);
-    inspectedTree.addEventListener("mouseover", handleMouseOver);
+    const inspectedTree = document.getElementById('inspected-trees') as HTMLDivElement;
+    inspectedTree.addEventListener('mouseleave', handleMouseLeave);
+    inspectedTree.addEventListener('mouseover', handleMouseOver);
 
     return () => {
-      inspectedTree.removeEventListener("mouseleave", handleMouseLeave);
-      inspectedTree.removeEventListener("mouseover", handleMouseOver);
+      inspectedTree.removeEventListener('mouseleave', handleMouseLeave);
+      inspectedTree.removeEventListener('mouseover', handleMouseOver);
     };
   }, []);
 
   const getStageTree = async () => {
     try {
       const data = await bridge<OutlineNode[]>(
-        "window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.outline.trees()"
+        'window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.outline.trees()',
       );
       if (data) {
         setTrees(data);
@@ -128,28 +124,28 @@ const Panel: React.FC = () => {
 
   const getSelectedNode = async () => {
     const data = await bridge<OutlineNode>(
-      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selected(true)`
+      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selected(true)`,
     );
     setSelectedNode(data);
   };
 
   const getActiveNode = async () => {
     const data = await bridge<OutlineNode>(
-      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.active(true)`
+      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.active(true)`,
     );
 
     setActiveNode(data);
     if (data) {
       alwaysInspect &&
         document.getElementById(data._id.toString()).scrollIntoView({
-          behavior: "auto",
-          block: "center",
-          inline: "center",
+          behavior: 'auto',
+          block: 'center',
+          inline: 'center',
         });
     }
 
     const shouldAlwaysInspect = await bridge<boolean>(
-      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.getAlwaysInspect()`
+      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.getAlwaysInspect()`,
     );
 
     setAlwaysInspect(shouldAlwaysInspect);
@@ -162,25 +158,20 @@ const Panel: React.FC = () => {
   };
 
   return (
-    <div className={`components ${isDarkMode ? "dark" : "light"}`}>
+    <div className={`components ${isDarkMode ? 'dark' : 'light'}`}>
       <Allotment>
-        <Allotment.Pane preferredSize={"65%"}>
+        <Allotment.Pane preferredSize={'65%'}>
           <div className="tree-list">
             <div className="search-input">
-              <a
-                href="https://github.com/maitrungduc1410/konva-inspector"
-                target="_blank"
-                rel="noreferrer"
-              >
-                <img src={logoIcon} width={28} />
+              <a href="https://github.com/maitrungduc1410/konva-inspector" target="_blank" rel="noreferrer">
+                <img alt="logo" src={logoIcon} width={28} />
               </a>
               <div className="v-rule"></div>
               <button
-                className={alwaysInspect ? "toggle-on" : "toggle-off"}
+                className={alwaysInspect ? 'toggle-on' : 'toggle-off'}
                 onClick={() => {
-                  setAlwaysInspect((cur) => !cur);
-                }}
-              >
+                  setAlwaysInspect(cur => !cur);
+                }}>
                 <span className="toggle-content" tabIndex={-1}>
                   <ToggleOff />
                 </span>
@@ -192,14 +183,11 @@ const Panel: React.FC = () => {
                   className="input"
                   placeholder="Search (text or /regex/)"
                   value={searchText}
-                  onChange={(e) => setSearchText(e.target.value)}
+                  onChange={e => setSearchText(e.target.value)}
                 />
               </div>
               <div className="v-rule"></div>
-              <button
-                className="button"
-                onClick={() => toggleTheme(!isDarkMode)}
-              >
+              <button className="button" onClick={() => toggleTheme(!isDarkMode)}>
                 <span className="button-content" tabIndex={-1}>
                   {isDarkMode ? <Sun /> : <Moon />}
                 </span>
@@ -215,7 +203,7 @@ const Panel: React.FC = () => {
                     stageIndex={index}
                     indent={0}
                     node={item}
-                    onSelectNode={(data) => {
+                    onSelectNode={data => {
                       setSelectedNode(data);
                       setAlwaysInspect(false);
                       setActiveNode(null); // because next interval may not run yet, so we need to set this to make sure active node is null

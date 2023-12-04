@@ -44,8 +44,8 @@ devDependencies:
     specifier: 0.0.251
     version: 0.0.251
   '@types/jest':
-    specifier: 29.5.7
-    version: 29.5.7
+    specifier: 29.5.10
+    version: 29.5.10
   '@types/lodash-es':
     specifier: ^4.17.11
     version: 4.17.11
@@ -1606,8 +1606,8 @@ packages:
       '@types/istanbul-lib-report': 3.0.2
     dev: true
 
-  /@types/jest@29.5.7:
-    resolution: {integrity: sha512-HLyetab6KVPSiF+7pFcUyMeLsx25LDNDemw9mGsJBkai/oouwrjTycocSDYopMEwFhN2Y4s9oPyOCZNofgSt2g==}
+  /@types/jest@29.5.10:
+    resolution: {integrity: sha512-tE4yxKEphEyxj9s4inideLHktW/x6DwesIwWZ9NN1FKf9zbJYsnhBoA9vrHA/IuIOKwPa5PcFBNV4lpMIOEzyQ==}
     dependencies:
       expect: 29.7.0
       pretty-format: 29.7.0

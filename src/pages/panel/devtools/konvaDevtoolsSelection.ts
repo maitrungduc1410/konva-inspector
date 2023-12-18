@@ -1,11 +1,12 @@
-import type Konva from "konva";
-import { Filter, KonvaDevtools, OutlineNode } from "../types";
-import { IAttr } from "../components/constants";
+import type Konva from 'konva';
+import { Filter, KonvaDevtools, OutlineNode } from '../types';
+import { IAttr } from '../components/constants';
 
 export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
   let activeNode: Konva.Container;
   let activeNodeStageIndex: number | null;
   let selectedNode: Konva.Container;
+  let selectedNodeStageIndex: number | null;
   let alwaysInspect = false;
 
   // memoize handler so that we can remove it later
@@ -14,128 +15,122 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
 
   const FILTER_RENDERERS: Array<{ name: string; values: IAttr[] }> = [
     {
-      name: "Blur",
-      values: [{ name: "blurRadius", type: "number", min: 0 }],
+      name: 'Blur',
+      values: [{ name: 'blurRadius', type: 'number', min: 0 }],
     },
     {
-      name: "Brighten",
+      name: 'Brighten',
+      values: [{ name: 'brightness', type: 'number', min: -1, max: 1, step: 0.05 }],
+    },
+    {
+      name: 'Contrast',
+      values: [{ name: 'contrast', type: 'number', min: -100, max: 100 }],
+    },
+    {
+      name: 'Emboss',
       values: [
-        { name: "brightness", type: "number", min: -1, max: 1, step: 0.05 },
-      ],
-    },
-    {
-      name: "Contrast",
-      values: [{ name: "contrast", type: "number", min: -100, max: 100 }],
-    },
-    {
-      name: "Emboss",
-      values: [
-        { name: "embossStrength", type: "number", min: 0, max: 1, step: 0.1 },
-        { name: "embossWhiteLevel", type: "number", min: 0, max: 1, step: 0.1 },
+        { name: 'embossStrength', type: 'number', min: 0, max: 1, step: 0.1 },
+        { name: 'embossWhiteLevel', type: 'number', min: 0, max: 1, step: 0.1 },
         {
-          name: "embossDirection",
-          type: "select",
+          name: 'embossDirection',
+          type: 'select',
           options: [
-            { value: "top", label: "Top" },
-            { value: "top-left", label: "Top Left" },
-            { value: "top-right", label: "Top Right" },
-            { value: "left", label: "Left" },
-            { value: "right", label: "Right" },
-            { value: "bottom", label: "Bottom" },
-            { value: "bottom-left", label: "Bottom Left" },
-            { value: "bottom-right", label: "Bottom Right" },
+            { value: 'top', label: 'Top' },
+            { value: 'top-left', label: 'Top Left' },
+            { value: 'top-right', label: 'Top Right' },
+            { value: 'left', label: 'Left' },
+            { value: 'right', label: 'Right' },
+            { value: 'bottom', label: 'Bottom' },
+            { value: 'bottom-left', label: 'Bottom Left' },
+            { value: 'bottom-right', label: 'Bottom Right' },
           ],
         },
         {
-          name: "embossBlend",
-          type: "boolean",
+          name: 'embossBlend',
+          type: 'boolean',
           defaultValue: false,
         },
       ],
     },
     {
-      name: "Enhance",
-      values: [
-        { name: "enhance", type: "number", min: -1, max: 1, step: 0.01 },
-      ],
+      name: 'Enhance',
+      values: [{ name: 'enhance', type: 'number', min: -1, max: 1, step: 0.01 }],
     },
     {
-      name: "Grayscale",
+      name: 'Grayscale',
       values: null,
     },
     {
-      name: "HSL",
+      name: 'HSL',
       values: [
-        { name: "hue", type: "number", min: 0, max: 259 },
-        { name: "saturation", type: "number", min: -2, max: 10, step: 0.5 },
-        { name: "luminance", type: "number", min: -2, max: 2, step: 0.1 },
+        { name: 'hue', type: 'number', min: 0, max: 259 },
+        { name: 'saturation', type: 'number', min: -2, max: 10, step: 0.5 },
+        { name: 'luminance', type: 'number', min: -2, max: 2, step: 0.1 },
       ],
     },
     {
-      name: "HSV",
+      name: 'HSV',
       values: [
-        { name: "hue", type: "number", min: 0, max: 259 },
-        { name: "saturation", type: "number", min: -2, max: 10, step: 0.5 },
-        { name: "value", type: "number", min: -2, max: 2, step: 0.1 },
+        { name: 'hue', type: 'number', min: 0, max: 259 },
+        { name: 'saturation', type: 'number', min: -2, max: 10, step: 0.5 },
+        { name: 'value', type: 'number', min: -2, max: 2, step: 0.1 },
       ],
     },
     {
-      name: "Invert",
+      name: 'Invert',
       values: null,
     },
     {
-      name: "Kaleidoscope",
+      name: 'Kaleidoscope',
       values: [
-        { name: "kaleidoscopePower", type: "number", min: 0 },
-        { name: "kaleidoscopeAngle", type: "number", min: 0 },
+        { name: 'kaleidoscopePower', type: 'number', min: 0 },
+        { name: 'kaleidoscopeAngle', type: 'number', min: 0 },
       ],
     },
     {
-      name: "Mask",
-      values: [{ name: "threshold", type: "number", min: 0 }],
+      name: 'Mask',
+      values: [{ name: 'threshold', type: 'number', min: 0 }],
     },
     {
-      name: "Noise",
-      values: [{ name: "noise", type: "number", min: 0, step: 0.1 }],
+      name: 'Noise',
+      values: [{ name: 'noise', type: 'number', min: 0, step: 0.1 }],
     },
     {
-      name: "Pixelate",
-      values: [{ name: "pixelSize", type: "number", min: 1 }],
+      name: 'Pixelate',
+      values: [{ name: 'pixelSize', type: 'number', min: 1 }],
     },
     {
-      name: "Posterize",
-      values: [{ name: "levels", type: "number", min: 0, max: 1, step: 0.01 }],
+      name: 'Posterize',
+      values: [{ name: 'levels', type: 'number', min: 0, max: 1, step: 0.01 }],
     },
     {
-      name: "RGB",
+      name: 'RGB',
       values: [
-        { name: "red", type: "number", min: 0, max: 256 },
-        { name: "green", type: "number", min: 0, max: 256 },
-        { name: "blue", type: "number", min: 0, max: 256 },
+        { name: 'red', type: 'number', min: 0, max: 256 },
+        { name: 'green', type: 'number', min: 0, max: 256 },
+        { name: 'blue', type: 'number', min: 0, max: 256 },
       ],
     },
     {
-      name: "RGBA",
+      name: 'RGBA',
       values: [
-        { name: "red", type: "number", min: 0, max: 256 },
-        { name: "green", type: "number", min: 0, max: 256 },
-        { name: "blue", type: "number", min: 0, max: 256 },
-        { name: "alpha", type: "number", min: 0, max: 1, step: 0.01 },
+        { name: 'red', type: 'number', min: 0, max: 256 },
+        { name: 'green', type: 'number', min: 0, max: 256 },
+        { name: 'blue', type: 'number', min: 0, max: 256 },
+        { name: 'alpha', type: 'number', min: 0, max: 1, step: 0.01 },
       ],
     },
     {
-      name: "Sepia",
+      name: 'Sepia',
       values: null,
     },
     {
-      name: "Solarize",
+      name: 'Solarize',
       values: null,
     },
     {
-      name: "Threshold",
-      values: [
-        { name: "threshold", type: "number", min: 0, max: 1, step: 0.01 },
-      ],
+      name: 'Threshold',
+      values: [{ name: 'threshold', type: 'number', min: 0, max: 1, step: 0.01 }],
     },
   ];
 
@@ -144,29 +139,40 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
       if (!activeNode) return undefined;
       return serialize ? devtools.outline.toObject(activeNode) : activeNode;
     },
-    selected(serialize = false): Konva.Node | OutlineNode | undefined {
+    selected(serialize = false, withStageIndex = false) {
       if (!selectedNode) return undefined;
-      return serialize ? devtools.outline.toObject(selectedNode) : selectedNode;
+      const node = serialize ? devtools.outline.toObject(selectedNode) : selectedNode;
+
+      if (withStageIndex) {
+        return {
+          node,
+          stageIndex: selectedNodeStageIndex,
+        };
+      }
+      return node;
     },
-    select(_id: number, stageIndex = 0): OutlineNode {
+    select(_id: number, stageIndex = 0, scrollToElement = false): OutlineNode {
       if (!activeNode) {
         return;
       }
-      const n = devtools.outline.select(
-        _id,
-        stageIndex,
-        false
-      ) as Konva.Container;
+      const n = devtools.outline.select(_id, stageIndex, false) as Konva.Container;
       selectedNode = n;
+      selectedNodeStageIndex = stageIndex;
+
+      if (scrollToElement) {
+        // scroll to element
+        const rect = n.getClientRect();
+        document.scrollingElement.scrollTo({
+          top: rect.y,
+          left: rect.x,
+          behavior: 'smooth',
+        });
+      }
 
       return devtools.outline.toObject(activeNode);
     },
     activate(_id: number, stageIndex = 0) {
-      const n = devtools.outline.select(
-        _id,
-        stageIndex,
-        false
-      ) as Konva.Container;
+      const n = devtools.outline.select(_id, stageIndex, false) as Konva.Container;
       activeNode = n;
       activeNodeStageIndex = stageIndex;
 
@@ -185,7 +191,7 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
         (() => {
           const newImg = new Image();
           newImg.onload = () => {
-            (devtools.selection.selected() as Konva.Image).image(newImg);
+            (devtools.selection.selected() as unknown as Konva.Image).image(newImg);
           };
           newImg.src = image as string;
         })();
@@ -200,15 +206,9 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
       }
       // we check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
       for (const [index, stage] of devtools.Konva().stages.entries()) {
-        stage.content.addEventListener(
-          "mouseleave",
-          devtools.selection.deactivateOnMouseLeaveWhenAlwaysInspect
-        );
-        stage.on(
-          "mouseover",
-          devtools.selection.selectShapeAtCursor(stage, index)
-        );
-        stage.on("click", devtools.selection.unregisterMouseOverEvents);
+        stage.content.addEventListener('mouseleave', devtools.selection.deactivateOnMouseLeaveWhenAlwaysInspect);
+        stage.on('mouseover', devtools.selection.selectShapeAtCursor(stage, index));
+        stage.on('click', devtools.selection.unregisterMouseOverEvents);
       }
       devtools.selection.setAlwaysInspect(true);
       1; // add this line so that it'll be returned when evaluation, otherwise it'll throw error because the evaluation returns object class
@@ -220,15 +220,9 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
       }
       // we check for window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva() is undefined or not to prevent the case when we reload at that time Konva is not initialized yet
       for (const [index, stage] of devtools.Konva().stages.entries()) {
-        stage.content.removeEventListener(
-          "mouseleave",
-          devtools.selection.deactivateOnMouseLeaveWhenAlwaysInspect
-        );
-        stage.off(
-          "mouseover",
-          devtools.selection.selectShapeAtCursor(stage, index)
-        );
-        stage.off("click", devtools.selection.unregisterMouseOverEvents);
+        stage.content.removeEventListener('mouseleave', devtools.selection.deactivateOnMouseLeaveWhenAlwaysInspect);
+        stage.off('mouseover', devtools.selection.selectShapeAtCursor(stage, index));
+        stage.off('click', devtools.selection.unregisterMouseOverEvents);
       }
       if (activeNode) {
         devtools.selection.select(activeNode._id, activeNodeStageIndex);
@@ -270,12 +264,10 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
       }
       const hostPageFilters = devtools.Konva().Filters;
       return (
-        selectedNode.filters()?.map((item) => {
+        selectedNode.filters()?.map(item => {
           // because in different versions of Konva, the function name may be diff, like "Blur -> Blur2"
-          const filter = Object.keys(hostPageFilters).find(
-            (key) => item === hostPageFilters[key]
-          );
-          const renderer = FILTER_RENDERERS.find((i) => i.name === filter);
+          const filter = Object.keys(hostPageFilters).find(key => item === hostPageFilters[key]);
+          const renderer = FILTER_RENDERERS.find(i => i.name === filter);
 
           const payload: Filter = {
             name: renderer.name,
@@ -310,6 +302,32 @@ export default function konvaDevtoolsSelection(devtools: KonvaDevtools) {
         currentFilters.push(newFilter);
         selectedNode.filters(currentFilters);
       }
+    },
+    renderedBy(_id: number, stageIndex = 0) {
+      if (!devtools.Konva()) {
+        return [];
+      }
+
+      const stage = devtools.stage(stageIndex);
+
+      if (stage._id === _id) {
+        return [];
+      }
+
+      const item = stage.findOne(n => n._id === _id);
+
+      if (item) {
+        const parentStacks = [];
+        let current = item;
+        while (current.getParent()) {
+          const currentParent = current.getParent();
+          parentStacks.push(devtools.outline.toObject(currentParent));
+          current = currentParent;
+        }
+        return parentStacks;
+      }
+
+      return [];
     },
   };
 }

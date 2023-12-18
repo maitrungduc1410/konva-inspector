@@ -1,6 +1,6 @@
 {
   "name": "konva-inspector",
-  "version": "0.0.17",
+  "version": "0.0.18",
   "description": "Devtools for your Konva App",
   "license": "MIT",
   "repository": {
@@ -31,6 +31,7 @@
     "lodash-es": "^4.17.21",
     "react": "18.2.0",
     "react-dom": "18.2.0",
+    "react-tooltip": "^5.25.0",
     "webextension-polyfill": "0.10.0"
   },
   "devDependencies": {
@@ -54,7 +55,6 @@
     "eslint-config-airbnb-typescript": "17.1.0",
     "eslint-config-prettier": "9.0.0",
     "eslint-plugin-import": "2.29.0",
-    "eslint-plugin-jsx-a11y": "6.8.0",
     "eslint-plugin-prettier": "5.0.1",
     "eslint-plugin-react": "7.33.2",
     "eslint-plugin-react-hooks": "4.6.0",

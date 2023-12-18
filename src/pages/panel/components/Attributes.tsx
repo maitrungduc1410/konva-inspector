@@ -1,10 +1,11 @@
-import { useState } from "react";
-import { bridge } from "..";
-import CopyToClipboard from "./icons/CopyToClipboard";
-import { IAttr } from "./constants";
-import DownArrow from "./icons/DownArrow";
-import RightArrow from "./icons/RightArrow";
-import Delete from "./icons/Delete";
+import { useState } from 'react';
+import { bridge } from '..';
+import CopyToClipboard from './icons/CopyToClipboard';
+import { IAttr } from './constants';
+import DownArrow from './icons/DownArrow';
+import RightArrow from './icons/RightArrow';
+import Delete from './icons/Delete';
+import { Tooltip } from 'react-tooltip';
 
 interface IProps {
   attrSearch?: string;
@@ -16,7 +17,7 @@ interface IProps {
   showCopyToClipboard?: boolean;
   showDelete?: boolean;
   showExpandIcon?: boolean;
-  updateAttr: (attrName: string, val: any) => Promise<void>;
+  updateAttr: (attrName: string, val: string | boolean | number) => Promise<void>;
   onRemove?: () => void;
 }
 
@@ -37,49 +38,43 @@ export default function Attributes({
 
   const copyToClipBoard = () => {
     bridge(
-      `window.copy(window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selected().attrs)`
+      `window.copy(window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selected().attrs)`,
     );
   };
 
   const renderArrow = () => {
     return (
-      <div
-        className={`expand-collapse-toggle ${showExpandIcon ? "" : "hidden"}`}
-        onClick={() => setExpanded((v) => !v)}
-      >
+      <div className={`expand-collapse-toggle ${showExpandIcon ? '' : 'hidden'}`} onClick={() => setExpanded(v => !v)}>
         {expanded ? <DownArrow /> : <RightArrow />}
       </div>
     );
   };
 
   const filteredAttrs = attrSearch
-    ? attrs.filter((item) =>
-        item.name.toLowerCase().startsWith(attrSearch.toLowerCase())
-      )
+    ? attrs.filter(item => item.name.toLowerCase().startsWith(attrSearch.toLowerCase()))
     : attrs;
 
   return (
-    <div className={`attributes ${borderDashed ? "dashed" : ""}`}>
+    <div className={`attributes ${borderDashed ? 'dashed' : ''}`}>
       <div className="header-row">
         {renderArrow()}
         <div className="header">{title}</div>
         {showCopyToClipboard && (
-          <button
-            className="button"
-            title="Copy Attributes to Clipboard"
-            onClick={() => copyToClipBoard()}
-          >
-            <span className="button-content" tabIndex={-1}>
-              <CopyToClipboard />
-            </span>
-          </button>
+          <>
+            <Tooltip id="copy-attrs-to-clipboard" />
+            <button
+              className="button"
+              data-tooltip-id="copy-attrs-to-clipboard"
+              data-tooltip-content="Copy Attributes to Clipboard"
+              onClick={() => copyToClipBoard()}>
+              <span className="button-content" tabIndex={-1}>
+                <CopyToClipboard />
+              </span>
+            </button>
+          </>
         )}
         {showDelete && (
-          <button
-            className="button"
-            title="Remove entry"
-            onClick={() => onRemove && onRemove()}
-          >
+          <button className="button" title="Remove entry" onClick={() => onRemove && onRemove()}>
             <span className="button-content" tabIndex={-1}>
               <Delete />
             </span>
@@ -88,11 +83,11 @@ export default function Attributes({
       </div>
       {expanded && (
         <div className="attr-list">
-          {filteredAttrs.map((item) => {
+          {filteredAttrs.map(item => {
             let input;
 
             switch (item.type) {
-              case "boolean": {
+              case 'boolean': {
                 input = (
                   <input
                     type="checkbox"
@@ -103,27 +98,23 @@ export default function Attributes({
                           : true
                         : nodeAttrs[item.name]
                     }
-                    onChange={(e) => updateAttr(item.name, e.target.checked)}
+                    onChange={e => updateAttr(item.name, e.target.checked)}
                   />
                 );
                 break;
               }
-              case "number": {
+              case 'number': {
                 input = (
                   <input
-                    value={
-                      nodeAttrs[item.name] !== undefined
-                        ? nodeAttrs[item.name]
-                        : ""
-                    }
+                    value={nodeAttrs[item.name] !== undefined ? nodeAttrs[item.name] : ''}
                     type="number"
                     placeholder="<default>"
-                    onChange={(e) =>
+                    onChange={e =>
                       updateAttr(
                         item.name,
                         isNaN(e.target.valueAsNumber)
                           ? null // JSON.stringify will not preserve undefined, so we have to use null here
-                          : e.target.valueAsNumber
+                          : e.target.valueAsNumber,
                       )
                     }
                     min={item.min}
@@ -133,32 +124,21 @@ export default function Attributes({
                 );
                 break;
               }
-              case "json": {
+              case 'json': {
                 input = (
                   <textarea
-                    value={
-                      nodeAttrs[item.name] !== undefined
-                        ? JSON.stringify(nodeAttrs[item.name])
-                        : ""
-                    }
+                    value={nodeAttrs[item.name] !== undefined ? JSON.stringify(nodeAttrs[item.name]) : ''}
                     placeholder="<default>"
-                    onChange={(e) =>
-                      updateAttr(item.name, JSON.parse(e.target.value))
-                    }
+                    onChange={e => updateAttr(item.name, JSON.parse(e.target.value))}
                   />
                 );
                 break;
               }
-              case "select": {
+              case 'select': {
                 input = (
-                  <select
-                    onChange={(e) => updateAttr(item.name, e.target.value)}
-                  >
+                  <select onChange={e => updateAttr(item.name, e.target.value)}>
                     {item.options.map((option, index) => (
-                      <option
-                        key={`${option.label}-${index}`}
-                        value={option.value}
-                      >
+                      <option key={`${option.label}-${index}`} value={option.value}>
                         {option.label}
                       </option>
                     ))}
@@ -169,29 +149,20 @@ export default function Attributes({
               default: {
                 input = (
                   <input
-                    value={
-                      nodeAttrs[item.name] !== undefined
-                        ? nodeAttrs[item.name]
-                        : ""
-                    }
+                    value={nodeAttrs[item.name] !== undefined ? nodeAttrs[item.name] : ''}
                     type="text"
                     placeholder="<default>"
-                    onChange={(e) => updateAttr(item.name, e.target.value)}
+                    onChange={e => updateAttr(item.name, e.target.value)}
                   />
                 );
               }
             }
             return (
               <div className="attr-item" key={item.name}>
-                <span
-                  className="item-name"
-                  style={{ color: keyColor || "inherit" }}
-                >
+                <span className="item-name" style={{ color: keyColor || 'inherit' }}>
                   {attrSearch?.length ? (
                     <>
-                      <mark className="current-highlight">
-                        {item.name.slice(0, attrSearch.length)}
-                      </mark>
+                      <mark className="current-highlight">{item.name.slice(0, attrSearch.length)}</mark>
                       <span>{item.name.slice(attrSearch.length)}</span>
                     </>
                   ) : (

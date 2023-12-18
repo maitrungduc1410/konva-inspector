@@ -1,8 +1,8 @@
-import { useState } from "react";
-import DownArrow from "./icons/DownArrow";
-import RightArrow from "./icons/RightArrow";
-import { OutlineNode } from "../types";
-import { bridge } from "..";
+import { useState } from 'react';
+import DownArrow from './icons/DownArrow';
+import RightArrow from './icons/RightArrow';
+import { OutlineNode } from '../types';
+import { bridge } from '..';
 
 interface IProps {
   searchText: string;
@@ -28,53 +28,48 @@ export default function Element({
   const renderArrow = () => {
     return (
       <div
-        className={`expand-collapse-toggle ${
-          !node.children?.length ? "hidden" : ""
-        }`}
-        onClick={() => setExpanded((v) => !v)}
-      >
+        className={`expand-collapse-toggle ${!node.children?.length ? 'hidden' : ''}`}
+        onClick={() => setExpanded(v => !v)}>
         {expanded ? <DownArrow /> : <RightArrow />}
       </div>
     );
   };
 
-  const shouldHighlight =
-    searchText.length &&
-    node.className.toLowerCase().startsWith(searchText.toLowerCase());
+  const shouldHighlight = searchText.length && node.className.toLowerCase().startsWith(searchText.toLowerCase());
+
+  const select = async (scrollToElement = false) => {
+    const data = await bridge<OutlineNode>(
+      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.select(${node._id}, ${stageIndex}, ${scrollToElement})`,
+    );
+
+    onSelectNode(data);
+  };
   return (
     <>
       <div
         id={node._id.toString()}
-        className={`element ${
-          selectedNode?._id === node._id ? "selected" : ""
-        } ${activeNode?._id === node._id ? "active" : ""}`}
+        className={`element ${selectedNode?._id === node._id ? 'selected' : ''} ${
+          activeNode?._id === node._id ? 'active' : ''
+        }`}
         style={{ paddingLeft: indent * 15 }}
-        onClick={async () => {
-          const data = await bridge<OutlineNode>(
-            `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.select(${node._id}, ${stageIndex})`
-          );
-
-          onSelectNode(data);
-        }}
+        onClick={() => select()}
+        onDoubleClick={() => select(true)}
         onMouseEnter={() => {
           bridge(
-            `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.activate(${node._id}, ${stageIndex})`
+            `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.activate(${node._id}, ${stageIndex})`,
           );
         }}
-      >
+        title="Double click to scroll to element">
         {renderArrow()}
         {shouldHighlight ? (
           <>
-            <mark className="current-highlight">
-              {node.className.slice(0, searchText.length)}
-            </mark>
+            <mark className="current-highlight">{node.className.slice(0, searchText.length)}</mark>
             <span>{node.className.slice(searchText.length)}</span>
           </>
         ) : (
           <>{node.className}</>
         )}
-        &nbsp;<span style={{ color: "var(--color-id-key)" }}>_id</span>=
-        <span className="key-value">{node._id}</span>
+        &nbsp;<span style={{ color: 'var(--color-id-key)' }}>_id</span>=<span className="key-value">{node._id}</span>
         {node.attrs.name && (
           <span title={node.attrs.name}>
             &nbsp;<span className="key-name">name</span>=
@@ -83,13 +78,12 @@ export default function Element({
         )}
         {node.attrs.id && (
           <span title={node.attrs.id}>
-            &nbsp;<span className="key-name">id</span>=
-            <span className="key-value">&quot;{node.attrs.id}&quot;</span>
+            &nbsp;<span className="key-name">id</span>=<span className="key-value">&quot;{node.attrs.id}&quot;</span>
           </span>
         )}
       </div>
       {expanded &&
-        node.children?.map((item) => (
+        node.children?.map(item => (
           <Element
             key={item._id}
             searchText={searchText}

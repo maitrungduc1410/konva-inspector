@@ -11,16 +11,17 @@ body {
 
 .components {
   --font-smoothing: auto;
-  --font-family-monospace: "SFMono-Regular", Consolas, "Liberation Mono", Menlo,
-    Courier, monospace;
-  --font-family-sans: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica,
-    Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
+  --font-family-monospace: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, Courier, monospace;
+  --font-family-sans: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji,
+    Segoe UI Emoji, Segoe UI Symbol;
   --font-size-monospace-small: 9px;
   --font-size-monospace-normal: 11px;
   --font-size-monospace-large: 15px;
   --font-size-sans-large: 14px;
   --line-height-data: 18px;
   --color-filter-header: #ee1fac;
+  --color-id-key: #ff8400;
+
   &.dark {
     --color-background: #282c34;
     --color-text: #ffffff;
@@ -46,8 +47,7 @@ body {
     --color-component-badge-background: rgba(255, 255, 255, 0.25);
     --color-component-badge-background-inverted: rgba(0, 0, 0, 0.25);
     --color-button-active: #61dafb;
-    --color-filter-key: #EAB2A0;
-    --color-id-key: #ff8400;
+    --color-filter-key: #eab2a0;
   }
 
   &.light {
@@ -75,8 +75,7 @@ body {
     --color-component-badge-background: rgba(0, 0, 0, 0.1);
     --color-component-badge-background-inverted: rgba(255, 255, 255, 0.25);
     --color-button-active: #0088fa;
-    --color-filter-key: #2E8A99;
-    --color-id-key: #1182cd;
+    --color-filter-key: #2e8a99;
   }
 
   position: relative;
@@ -209,9 +208,7 @@ body {
     }
     .trees {
       overflow-y: auto;
-      height: calc(
-        100% - 42px - 3px
-      ); // add 3px as buffer for better scrollbar visibility
+      height: calc(100% - 42px - 3px); // add 3px as buffer for better scrollbar visibility
     }
   }
   .inspected-element {
@@ -303,17 +300,25 @@ body {
         }
         .attr-list {
           .attr-item {
-            display: flex;
-            padding-left: 15px;
             padding-top: 1px;
             padding-bottom: 1px;
+            &:not(:first-child) {
+              margin-top: 0.5rem;
+            }
+          }
+          .parent-item {
+            padding-top: 3px;
+            padding-bottom: 3px;
+            cursor: pointer;
+          }
+          .attr-item,
+          .parent-item {
+            display: flex;
+            padding-left: 15px;
+
             &:hover {
               background-color: var(--color-background-hover);
               border-radius: 4px;
-            }
-
-            &:not(:first-child) {
-              margin-top: 0.5rem;
             }
 
             .item-name {
@@ -322,7 +327,8 @@ body {
             }
 
             input,
-            textarea, select {
+            textarea,
+            select {
               flex: 1 1;
               width: 100%;
               background: none;
@@ -366,9 +372,7 @@ body {
     color: var(--color-text-selected);
     --color-component-name: var(--color-component-name-inverted);
     --color-text: var(--color-text-selected);
-    --color-component-badge-background: var(
-      --color-component-badge-background-inverted
-    );
+    --color-component-badge-background: var(--color-component-badge-background-inverted);
     --color-component-badge-count: var(--color-component-badge-count-inverted);
     --color-attribute-name: var(--color-attribute-name-inverted);
     --color-attribute-value: var(--color-attribute-value-inverted);

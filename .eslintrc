@@ -10,7 +10,6 @@
     "plugin:@typescript-eslint/recommended",
     "plugin:react-hooks/recommended",
     "plugin:import/recommended",
-    "plugin:jsx-a11y/recommended",
     "prettier"
   ],
   "parser": "@typescript-eslint/parser",
@@ -21,7 +20,7 @@
     "ecmaVersion": "latest",
     "sourceType": "module"
   },
-  "plugins": ["react", "@typescript-eslint", "react-hooks", "import", "jsx-a11y", "prettier"],
+  "plugins": ["react", "@typescript-eslint", "react-hooks", "import", "prettier"],
   "settings": {
     "react": {
       "version": "detect"
@@ -29,7 +28,9 @@
   },
   "rules": {
     "react/react-in-jsx-scope": "off",
-    "import/no-unresolved": "off"
+    "import/no-unresolved": "off",
+    "@typescript-eslint/no-explicit-any": "off",
+    "react-hooks/exhaustive-deps": "off"
   },
   "globals": {
     "chrome": "readonly"

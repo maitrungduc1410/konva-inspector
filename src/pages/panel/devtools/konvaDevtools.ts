@@ -1,14 +1,14 @@
-import type TKonva from "konva";
+import type TKonva from 'konva';
 
 export default function konvaDevtools() {
-  const win = window as any;
+  const win = window;
 
   function getGlobal(varname: string) {
     if (win[varname]) {
       return win[varname];
     }
     if (win.frames) {
-      for (let i = 0; i < win.frames.length; i += 1) {
+      for (let i = 0; i < win.frames.length; i++) {
         try {
           if (win.frames[i][varname]) {
             return win.frames[i][varname];
@@ -22,7 +22,7 @@ export default function konvaDevtools() {
   }
 
   function Konva(): typeof TKonva {
-    return getGlobal("Konva");
+    return getGlobal('Konva');
   }
 
   return {

@@ -1,5 +1,5 @@
-import type Konva from "konva";
-import { KonvaDevtools, OutlineNode } from "../types";
+import type Konva from 'konva';
+import { KonvaDevtools, OutlineNode } from '../types';
 
 /**
  * Treeview operations
@@ -10,11 +10,9 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
 
     if (node.hasChildren()) {
       obj.children = [];
-      (node as Konva.Container)
-        .getChildren()
-        .forEach((child: Konva.Container) => {
-          obj.children.push(buildTree(child));
-        });
+      (node as Konva.Container).getChildren().forEach((child: Konva.Container) => {
+        obj.children.push(buildTree(child));
+      });
     }
 
     return obj;
@@ -24,7 +22,7 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
   // the purpose of this is to allows us add any custom fields as we want
   function toObject(node: Konva.Node): OutlineNode {
     // eslint-disable-next-line prefer-const
-    let obj = {} as any,
+    let obj: Partial<OutlineNode> = {},
       // eslint-disable-next-line prefer-const
       attrs = node.getAttrs(),
       key,
@@ -46,13 +44,13 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
         !devtools.Konva().Util._isPlainObject(val) &&
         !devtools.Konva().Util._isArray(val);
       if (nonPlainObject) {
-        if (className === "Image") {
+        if (className === 'Image') {
           obj.attrs.image = val.src;
         }
 
         continue;
       }
-      getter = typeof this[key] === "function" && this[key];
+      getter = typeof this[key] === 'function' && this[key];
       // remove attr value so that we can extract the default value from the getter
       delete attrs[key];
       defaultValue = getter ? getter.call(this) : null;
@@ -83,9 +81,9 @@ export default function konvaDevtoolsOutline(devtools: KonvaDevtools) {
     select(_id: number, stageIndex = 0, serialize = true) {
       if (!devtools.Konva()) return undefined;
 
-      const stage = devtools.Konva().stages[stageIndex];
+      const stage = devtools.stage(stageIndex);
       if (stage._id === _id) return serialize ? toObject(stage) : stage;
-      const item = stage.findOne((n) => n._id === _id);
+      const item = stage.findOne(n => n._id === _id);
       if (item) return serialize ? toObject(item) : item;
 
       return undefined;

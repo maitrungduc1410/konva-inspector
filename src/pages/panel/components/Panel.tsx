@@ -12,10 +12,12 @@ import Sun from './icons/Sun';
 import Moon from './icons/Moon';
 import { Allotment } from 'allotment';
 import 'allotment/dist/style.css';
+import { Tooltip } from 'react-tooltip';
 
 const Panel: React.FC = () => {
   const [trees, setTrees] = useState<OutlineNode[]>([]);
   const [selectedNode, setSelectedNode] = useState<OutlineNode | null>(null);
+  const [selectedNodeStageIndex, setSelectedNodeStageIndex] = useState<number | null>(null);
   const [activeNode, setActiveNode] = useState<OutlineNode | null>(null);
   const [searchText, setSearchText] = useState<string>('');
   const [alwaysInspect, setAlwaysInspect] = useState<boolean>(false);
@@ -123,10 +125,13 @@ const Panel: React.FC = () => {
   };
 
   const getSelectedNode = async () => {
-    const data = await bridge<OutlineNode>(
-      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selected(true)`,
+    const data = await bridge<{ node: OutlineNode; stageIndex: number }>(
+      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.selected(true, true)`,
     );
-    setSelectedNode(data);
+    if (data) {
+      setSelectedNode(data.node);
+      setSelectedNodeStageIndex(data.stageIndex);
+    }
   };
 
   const getActiveNode = async () => {
@@ -167,11 +172,14 @@ const Panel: React.FC = () => {
                 <img alt="logo" src={logoIcon} width={28} />
               </a>
               <div className="v-rule"></div>
+              <Tooltip id="always-inspect" />
               <button
                 className={alwaysInspect ? 'toggle-on' : 'toggle-off'}
                 onClick={() => {
                   setAlwaysInspect(cur => !cur);
-                }}>
+                }}
+                data-tooltip-id="always-inspect"
+                data-tooltip-content="Select an object to inspect">
                 <span className="toggle-content" tabIndex={-1}>
                   <ToggleOff />
                 </span>
@@ -187,7 +195,12 @@ const Panel: React.FC = () => {
                 />
               </div>
               <div className="v-rule"></div>
-              <button className="button" onClick={() => toggleTheme(!isDarkMode)}>
+              <Tooltip id="change-theme" />
+              <button
+                className="button"
+                onClick={() => toggleTheme(!isDarkMode)}
+                data-tooltip-id="change-theme"
+                data-tooltip-content="Change theme">
                 <span className="button-content" tabIndex={-1}>
                   {isDarkMode ? <Sun /> : <Moon />}
                 </span>
@@ -205,6 +218,7 @@ const Panel: React.FC = () => {
                     node={item}
                     onSelectNode={data => {
                       setSelectedNode(data);
+                      setSelectedNodeStageIndex(index);
                       setAlwaysInspect(false);
                       setActiveNode(null); // because next interval may not run yet, so we need to set this to make sure active node is null
                     }}
@@ -216,7 +230,13 @@ const Panel: React.FC = () => {
         </Allotment.Pane>
         <Allotment.Pane>
           <div className="inspected-element">
-            <InspectedElement selectedNode={selectedNode} />
+            <InspectedElement
+              selectedNode={selectedNode}
+              stageIndex={selectedNodeStageIndex}
+              updateActiveNode={() => {
+                getActiveNode();
+              }}
+            />
           </div>
         </Allotment.Pane>
       </Allotment>

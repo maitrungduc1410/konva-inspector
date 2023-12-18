@@ -29,9 +29,8 @@
 # Develop
 To Develop the extension:
 - First clone the project
-- Install `pnpm` globally: `npm install -g pnpm`
-- Run `pnpm install`
-- Run `npm run dev` (for Chrome/Edge) or `npm run dev:firefox` for Firefox
+- Run `yarn install`
+- Run `yarn dev` (for Chrome/Edge) or `yarn dev:firefox` for Firefox
 
 After that, a `dist` folder will be generated, next based on your browser do the following
 - Chrome: open `chrome://extensions/` and drag `dist` folder there

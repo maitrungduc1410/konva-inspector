@@ -1,18 +1,25 @@
 # dependencies
-/node_modules
+**/node_modules
 
 # testing
-/coverage
+**/coverage
 
 # build
-/dist
+**/dist
+**/build
+**/dist-zip
+chrome-extension/manifest.js
+chrome-extension/pre-build.tsconfig.tsbuildinfo
+tsconfig.tsbuildinfo
+
+# env
+**/.env.*
+**/.env
 
 # etc
 .DS_Store
-.env.local
 .idea
+**/.turbo
 
 # compiled
-utils/reload/*.js
-utils/reload/injections/*.js
-public/manifest.json
+**/tailwind-output.css

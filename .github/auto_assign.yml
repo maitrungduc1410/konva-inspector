@@ -1,8 +1,7 @@
 addReviewers: true
 
 reviewers:
-  - Jonghakseo
-  - PatrykKuniczak
+  - maitrungduc1410
 
 addAssignees: author
 

@@ -3,8 +3,7 @@ description: Create a bug report.
 title: "[Bug]: "
 labels: [ "bug", "triage" ]
 assignees:
-  - Jonghakseo
-  - PatrykKuniczak
+  - maitrungduc1410
 
 body:
   - type: textarea

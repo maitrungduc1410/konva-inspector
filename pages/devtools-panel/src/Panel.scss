@@ -71,4 +71,8 @@
   color: var(--color-text);
   font-family: var(--font-family-sans);
   -webkit-font-smoothing: var(--font-smoothing);
+
+  .react-tooltip {
+    z-index: 9999 !important;
+  }
 }

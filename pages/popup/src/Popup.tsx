@@ -6,15 +6,18 @@ const Popup = () => {
 
   useEffect(() => {
     detect();
-    const timeout = setInterval(detect, 3000);
+    const interval = setInterval(detect, 3000);
 
     function detect() {
       chrome.tabs.query({ active: true, currentWindow: true }, function (tabs) {
         if (tabs[0]?.id) {
           chrome.tabs.sendMessage(tabs[0].id, { type: '__KONVA_DEVTOOLS__REQUEST_DETECTION' }, function (response) {
+            if (chrome.runtime.lastError) {
+              return;
+            }
             setIsKonva(response);
             if (response) {
-              clearInterval(timeout);
+              clearInterval(interval);
             }
           });
         }
@@ -22,7 +25,7 @@ const Popup = () => {
     }
 
     return () => {
-      clearInterval(timeout);
+      clearInterval(interval);
     };
   }, []);
 

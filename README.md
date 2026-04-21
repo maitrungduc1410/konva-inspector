@@ -1,77 +1,104 @@
+# Konva Devtools
+
+A browser DevTools extension for inspecting and debugging [Konva.js](https://konvajs.org/) canvas applications. Think "React DevTools" but for Konva.
+
+<img src="./images/demo.png">
+
 <div align="center">
-<img src="./images/icon128.png" alt="logo"/>
-<h1>Konva Devtools</h1>
-<div>
-<a href="https://chrome.google.com/webstore/detail/konvajs-devtools/aleknfecbpmpnkfoaohgpffcjenmjjfi">Chrome Extension</a>
-&#x2022;
-<a href="https://addons.mozilla.org/vi/firefox/addon/konvajs-devtools">Firefox Addon</a>
-&#x2022;
-<a href="https://microsoftedge.microsoft.com/addons/detail/konvajs-devtools/noiamlkeehkigdfegcnnfanplidpmeaa">Edge Addon</a>
+  <a href="https://chrome.google.com/webstore/detail/konvajs-devtools/aleknfecbpmpnkfoaohgpffcjenmjjfi" target="_blank">Chrome Extension</a> •
+  <a href="https://addons.mozilla.org/vi/firefox/addon/konvajs-devtools" target="_blank">Firefox Addon</a> •
+  <a href="https://microsoftedge.microsoft.com/addons/detail/konvajs-devtools/noiamlkeehkigdfegcnnfanplidpmeaa" target="_blank">Edge Addon</a>
 </div>
 
-<div>
-  <img style="width: 40%;" src="images/screenshots/2400x1800/1.png" />
-  <img style="width: 40%;" src="images/screenshots/2400x1800/2.png" />
-  <img style="width: 40%;" src="images/screenshots/2400x1800/3.png" />
-  <img style="width: 40%;" src="images/screenshots/2400x1800/4.png" />
-  <img style="width: 40%;" src="images/screenshots/2400x1800/5.png" />
-</div>
 
-</div>
+## Features
 
-# Features
-- [x] Support all Konva objects (Text, Image, Rect, Star, Group, Stage, Layer,....)
-- [x] Edit object attributes in place, right in the extension
-- [x] Changing Filter is supported
-- [x] Select object by Cursor
-- [x] Dark theme supported
-- [x] Multiple stages supported
-# Develop
-To Develop the extension:
-- First clone the project
-- Run `pnpm install`
-- Run `pnpm dev` (for Chrome/Edge) or `pnpm dev:firefox` for Firefox
+### Elements Tab
 
-After that, a `dist` folder will be generated, next based on your browser do the following
-- Chrome: open `chrome://extensions/` and drag `dist` folder there
-- Edge: open `edge://extensions/` and drag `dist` folder there
-- Firefox: open `about:debugging#/runtime/this-firefox` > Load Temporary Add-on > Select any file in the `dist` folder
+- **Scene graph tree** — browse every Stage, Layer, Group, and Shape in a virtualized tree view
+- **Attribute editor** — edit any node attribute in place with color pickers and number scrubbing
+- **Filter editor** — add, remove, and tweak Konva filters (+ native CSS filters on Konva v10)
+- **Select by cursor** — click nodes on the canvas to select them in the tree
+- **`$konva` console variable** — the selected node is available as `$konva` in the browser console
+- **Event listener inspector** — see all registered event listeners and detect `listening: false` issues
+- **Cache inspector** — view cache dimensions/memory, enable or clear cache on any node
+- **Change tracking** — snapshot a node's attributes and watch for changes in real time
+- **Enhanced search** — search by class name, `/regex/`, `attr:value`, or `#id`
+- **Drag-and-drop reorder** — rearrange nodes in the tree to change z-order or reparent
+- **Export / Import** — export any stage as JSON, import JSON back into the scene
+- **Copy as code** — copy a node as a `new Konva.X({...})` constructor call
+- **Hit region visualization** — overlay showing which shapes receive pointer events
+- **Render heatmap** — color-coded overlay showing which layers redraw most frequently
+- **Scene statistics** — footer bar with node counts, cache memory, and Konva version
+- **Dark / light theme** — follows system preference, toggleable
 
-> Note: for Firefox, to make background script + popup page work on load, right click the Konva extension icon on browser bar -> select "Always allow....""
+### Profiler Tab
 
-# Build
-To build project for publish, run `pnpm build` (for Chrome/Edge) or `pnpm build:firefox` for Firefox
+- **Record layer draws** — measure how long each `Layer.draw()` takes
+- **Per-layer summary** — average, max, and total draw times with visual bars
+- **Recent draws timeline** — table of individual draw events with timestamps
 
-# Architecture
-## Overview
+### Animations Tab
 
-| Module            | File                                                       | Description                                                                                                                                                                                                                                                                                                                                             | Screenshot                                                              |
-|-------------------|------------------------------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------|
-| background_script | [chrome-extension/src/background/index.ts](chrome-extension/src/background/index.ts) | Background script runs in background, used to receive detection result from content_script, and update extension icon from black to blue (if Konva is found)                                                                                                                                                                                            | ![ alt text ]( images/extension_icon_bg_script.png   "Extension_icon" ) |
-| content_script    | [pages/content/src/matches/all/index.ts](pages/content/src/matches/all/index.ts)       | Content script runs on host page loaded, it has an interval to detect Konva by injecting `detector.iife.js` to the host page (because content_script doesn't shared same JS runtime with host page) then push message background script to update extension icon. It also receives message for detection request from popup page to detect Konva immediately |                                                                         |
-| detector    | [pages/content/src/matches/detector/index.ts](pages/content/src/matches/detector/index.ts)       | Detector script will run on host page to detect if Konva is installed, this script shares same JS context with host page |                                                                         |
-| devtools          | [pages/devtools/src/index.ts](pages/devtools/src/index.ts)     | Devtools page, which will spawn `panel` for devtools UI. It has an `interval` to keep on detecting Konva from host page until found, and only add `panel` if Konva is found                                                                                                                                                                             |                                                                         |
-| panel             | [pages/devtools-panel/src/index.tsx](pages/devtools-panel/src/index.tsx)         | React UI for the devtool, details see below                                                                                                                                                                                                                                                                                                             | ![ alt text ]( images/screenshots/2400x1800/1.png   "Title" )           |
-| popup             | [pages/popup/src/index.tsx](pages/popup/src/index.tsx)         | React UI for popup page, on click the icon to open the popup page, we send a message to content_script to request detect immediately                                                                                                                                                                                                                    | ![ alt text ]( images/popup_page.png   "Popup page" )                   |
+- **Live animation monitor** — see all running `Konva.Animation` instances and their target layers
+- **Live tween monitor** — see all active `Konva.Tween` instances, their target nodes, and animated properties
+- **Auto-cleanup** — stale entries from destroyed stages are automatically filtered out
 
-## Panel architecture
-Panel is just a normal React app that renders detected Konva element tree except it has 2 extra parts:
-- [devtools](pages/devtools-panel/src/devtools/connect.ts): global variables that will be injected to host page at runtime
-- [bridge function](pages/devtools-panel/src/index.tsx): a function to execute JS code at host page, it's just a wrapper of `chrome.devtools.inspectedWindow.eval` that returns a Promise
+### Tools
 
+- **Transform gizmo** — toggle a native Konva Transformer on the selected node for interactive resize/rotate/move
+- **Screenshot tools** — export the entire stage or just the selected node as a PNG image
+- **Keyboard shortcuts** — Arrow keys to navigate, Enter/Escape to select/deselect, Delete to remove, H to toggle visibility, L to toggle listening, Cmd/Ctrl+F to search
+- **Bookmark / pin nodes** — pin frequently inspected nodes for quick access (persisted across sessions)
+- **Accessibility insights** — flag common issues on interactive nodes: missing names, tiny hit areas, blocked listeners, low opacity, hidden state
 
-The `devtools` will inject the follow global variables to host page:
-- root `__KONVA_DEVTOOLS_GLOBAL_HOOK__`: has some common functions `Konva(), content(), stage()`
-- `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.outline`: helper functions to get Konva object tree
-- `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection` helper functions to select/highlight/active/update attributes for Konva object
-- `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.overlay`: function to render a blue highlight box on top of Konva object when highlighting
+### General
 
-The `devtools` has a root method `connect` that will convert all the above variables/functions to string then use `bridge` to execute it on the host page
+- Supports Konva v9 and v10
+- Multiple stages supported
+- Works on Chrome, Edge, and Firefox
 
-> Note that the `bridge` uses `chrome.devtools.inspectedWindow.eval` requires result of the evaluation expression to be serializable so if it returns something like an instance of a Class then it'll throw error
-# Thanks
-- [pixi-inspector](https://github.com/bfanger/pixi-inspector): which gives me very great idea on how to structure my code
-- [react devtools](https://github.com/facebook/react/tree/main/packages/react-devtools): My extension UI is inspired by this
-- [chrome-extension-boilerplate-react-vite
-](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite): Boiler template project to create Chrome extension
+## Develop
 
+```bash
+git clone <repo-url>
+pnpm install
+pnpm dev              # Chrome/Edge dev mode with HMR
+pnpm dev:firefox      # Firefox dev mode
+```
+
+Load the extension from the generated `dist/` folder:
+
+- **Chrome**: `chrome://extensions/` → Enable Developer mode → Load unpacked → select `dist/`
+- **Edge**: `edge://extensions/` → Enable Developer mode → Load unpacked → select `dist/`
+- **Firefox**: `about:debugging#/runtime/this-firefox` → Load Temporary Add-on → select any file in `dist/`
+
+> For Firefox, right-click the Konva extension icon → "Always allow on..." to enable background script + popup.
+
+### Example App
+
+A local test application is included at `examples/konva-app/`:
+
+```bash
+cd examples/konva-app && pnpm install && pnpm dev
+```
+
+Four modes: Basic Examples, Multi Stage (with dynamic add/delete stage controls), Accessibility (a11y issue test cases), and Stress Test (~10k nodes).
+
+## Build
+
+```bash
+pnpm build            # Chrome/Edge production build
+pnpm build:firefox    # Firefox production build
+pnpm zip              # Build + zip for store upload
+```
+
+## Architecture
+
+See [ARCHITECTURE.md](ARCHITECTURE.md) for a detailed explanation of how the extension works, including the bridge pattern, injected modules, and how each tab (Elements, Profiler, Animations) is implemented.
+
+## Thanks
+
+- [pixi-inspector](https://github.com/bfanger/pixi-inspector) — great reference for structuring a canvas devtools extension
+- [React DevTools](https://github.com/facebook/react/tree/main/packages/react-devtools) — UI inspiration
+- [chrome-extension-boilerplate-react-vite](https://github.com/Jonghakseo/chrome-extension-boilerplate-react-vite) — boilerplate template

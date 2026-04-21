@@ -1,7 +1,7 @@
 {
   "name": "konva-inspector",
   "version": "0.0.0",
-  "description": "Devtools for your Konva App",
+  "description": "Inspect, debug, and profile Konva.js canvas apps. Browse the scene graph, edit attributes live, track animations, and find issues.",
   "license": "MIT",
   "private": true,
   "sideEffects": false,

@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Konva Inspector - Example App</title>
+    <style>
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body {
+        font-family: system-ui, -apple-system, sans-serif;
+        background: #1a1a2e;
+        color: #eee;
+        min-height: 100vh;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        padding: 24px;
+      }
+      h1 { margin-bottom: 8px; font-size: 1.5rem; }
+      p { margin-bottom: 16px; color: #aaa; font-size: 0.9rem; }
+      #toolbar {
+        display: flex;
+        gap: 10px;
+        margin-bottom: 16px;
+      }
+      #toolbar button {
+        padding: 8px 20px;
+        border: 2px solid #444;
+        border-radius: 6px;
+        background: transparent;
+        color: #ccc;
+        font-size: 0.9rem;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      #toolbar button:hover { border-color: #3498db; color: #fff; }
+      #toolbar button.active {
+        background: #3498db;
+        border-color: #3498db;
+        color: #fff;
+      }
+      #stats {
+        margin-bottom: 12px;
+        font-size: 0.85rem;
+        color: #7f8c8d;
+        min-height: 1.2em;
+      }
+      #canvas-area { display: flex; flex-direction: column; gap: 16px; align-items: center; }
+      .stage-container { border: 1px solid #333; border-radius: 8px; overflow: hidden; }
+      .stage-wrapper { position: relative; }
+      .stage-label { font-size: 0.8rem; color: #7f8c8d; margin-bottom: 4px; }
+      .stage-delete-btn {
+        padding: 2px 10px;
+        border: 1px solid #e74c3c55;
+        border-radius: 4px;
+        background: transparent;
+        color: #e74c3c;
+        font-size: 0.75rem;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .stage-delete-btn:hover { background: #e74c3c22; border-color: #e74c3c; }
+      .add-stage-bar {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border: 1px dashed #444;
+        border-radius: 6px;
+        background: #1a1a2e;
+      }
+      .add-stage-bar button {
+        padding: 4px 12px;
+        border: 1px solid #3498db55;
+        border-radius: 4px;
+        background: transparent;
+        color: #3498db;
+        font-size: 0.78rem;
+        cursor: pointer;
+        transition: all 0.15s;
+      }
+      .add-stage-bar button:hover { background: #3498db22; border-color: #3498db; }
+    </style>
+  </head>
+  <body>
+    <h1>Konva Inspector - Example App</h1>
+    <p>Open DevTools &rarr; Konva panel to inspect this canvas</p>
+    <div id="toolbar">
+      <button id="btn-basic" class="active">Basic Examples</button>
+      <button id="btn-multi">Multi Stage</button>
+      <button id="btn-a11y">Accessibility</button>
+      <button id="btn-stress">Stress Test (~10k nodes)</button>
+    </div>
+    <div id="stats"></div>
+    <div id="canvas-area"></div>
+    <script type="module" src="/src/main.ts"></script>
+  </body>
+</html>

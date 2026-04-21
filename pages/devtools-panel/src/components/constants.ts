@@ -238,6 +238,11 @@ export const SHAPE_ATTRS: IAttr[] = [
     name: 'perfectDrawEnabled',
     type: 'boolean',
   },
+  {
+    name: 'miterLimit',
+    type: 'number',
+    min: 0,
+  },
 ];
 
 export const SHAPE_CUSTOM_ATTRS: Record<string, IAttr[]> = {
@@ -309,6 +314,7 @@ export const SHAPE_CUSTOM_ATTRS: Record<string, IAttr[]> = {
     { name: 'rotationSnaps', type: 'json' },
     { name: 'rotationSnapTolerance', type: 'number' },
     { name: 'rotateAnchorOffset', type: 'number' },
+    { name: 'rotateAnchorAngle', type: 'number' },
     { name: 'borderEnabled', type: 'boolean' },
     { name: 'borderStroke', type: 'string' },
     { name: 'borderStrokeWidth', type: 'number' },
@@ -364,6 +370,7 @@ export const SHAPE_CUSTOM_ATTRS: Record<string, IAttr[]> = {
     { name: 'letterSpacing', type: 'number' },
     { name: 'wrap', type: 'string' },
     { name: 'ellipsis', type: 'boolean', defaultValue: false },
+    { name: 'underlineOffset', type: 'number' },
   ],
   TextPath: [
     { name: 'text', type: 'string' },
@@ -371,6 +378,7 @@ export const SHAPE_CUSTOM_ATTRS: Record<string, IAttr[]> = {
     { name: 'fontFamily', type: 'string' },
     { name: 'fontSize', type: 'number', min: 0 },
     { name: 'fontStyle', type: 'string' },
+    { name: 'textDecoration', type: 'string' },
     { name: 'letterSpacing', type: 'number' },
   ],
   Star: [
@@ -403,6 +411,11 @@ export const SHAPE_CUSTOM_ATTRS: Record<string, IAttr[]> = {
     {
       name: 'radius',
       type: 'number',
+    },
+    {
+      name: 'cornerRadius',
+      type: 'number',
+      min: 0,
     },
   ],
   Arrow: [
@@ -441,6 +454,7 @@ export const SHAPE_CUSTOM_ATTRS: Record<string, IAttr[]> = {
 export const FILTER_SELECT = [
   'Blur',
   'Brighten',
+  'Brightness',
   'Contrast',
   'Emboss',
   'Enhance',

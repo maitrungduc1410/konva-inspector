@@ -23,17 +23,25 @@ export default function RenderedBy({ _id, stageIndex, updateActiveNode }: IProps
   }, [_id, stageIndex]);
 
   const getParentStacks = useCallback(async () => {
-    const data = await bridge<OutlineNode[]>(
-      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.renderedBy(${_id}, ${stageIndex})`,
-    );
-    setParents(data);
+    try {
+      const data = await bridge<OutlineNode[]>(
+        `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.renderedBy(${_id}, ${stageIndex})`,
+      );
+      setParents(data);
+    } catch {
+      // can fail during host page reload
+    }
   }, [_id, stageIndex]);
 
   const getVersion = useCallback(async () => {
-    const data = await bridge<string>(
-      `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva().version`,
-    );
-    setVersion(data);
+    try {
+      const data = await bridge<string>(
+        `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.Konva().version`,
+      );
+      setVersion(data);
+    } catch {
+      // can fail during host page reload
+    }
   }, []);
 
   const renderArrow = useMemo(
@@ -55,10 +63,14 @@ export default function RenderedBy({ _id, stageIndex, updateActiveNode }: IProps
         <div
           className="mt-1.25"
           onMouseLeave={async () => {
-            await bridge(
-              `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()`,
-            );
-            updateActiveNode(); // immediately update UI for better UX
+            try {
+              await bridge(
+                `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()`,
+              );
+              updateActiveNode();
+            } catch {
+              // can fail during host page reload
+            }
           }}>
           {parents.map(item => (
             <div
@@ -66,15 +78,19 @@ export default function RenderedBy({ _id, stageIndex, updateActiveNode }: IProps
               key={item._id}
               style={{ color: 'var(--color-component-name)' }}
               onMouseEnter={async () => {
-                await bridge(
-                  `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.activate(${item._id}, ${stageIndex})`,
-                );
-                updateActiveNode(); // immediately update UI for better UX
+                try {
+                  await bridge(
+                    `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.activate(${item._id}, ${stageIndex})`,
+                  );
+                  updateActiveNode();
+                } catch {
+                  // can fail during host page reload
+                }
               }}
               onClick={() =>
                 bridge(
                   `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.select(${item._id}, ${stageIndex})`,
-                )
+                ).catch(() => {})
               }>
               <span className="font-mono">{item.className}</span>
               &nbsp;<span style={{ color: 'var(--color-id-key)' }}>_id</span>=

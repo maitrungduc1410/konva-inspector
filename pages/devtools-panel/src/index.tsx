@@ -8,10 +8,10 @@ const bridge: BridgeFn = (code: string) =>
     chrome.devtools.inspectedWindow.eval(code, (result, err) => {
       if (err) {
         if (err instanceof Error) {
-          reject(err);
+          return reject(err);
         }
         console.log(code);
-        reject(new Error(err.value || err.description || err.code));
+        return reject(new Error(err.value || err.description || err.code));
       }
       resolve(result as any);
     });
@@ -31,7 +31,9 @@ const init = () => {
   // TODO: find a solution for firefox
   // chrome.windows is not available on firefox
   chrome.windows?.onFocusChanged.addListener(() => {
-    bridge('window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()');
+    bridge('window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.deactivate()').catch(
+      () => {},
+    );
   });
 };
 

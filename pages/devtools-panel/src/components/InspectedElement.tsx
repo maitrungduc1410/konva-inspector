@@ -8,6 +8,13 @@ import Debug from './icons/Debug';
 import Filters from './Filters';
 import { Tooltip } from 'react-tooltip';
 import RenderedBy from './RenderedBy';
+import EventListeners from './EventListeners';
+import CacheInspector from './CacheInspector';
+import NodeDiff from './NodeDiff';
+import AccessibilityInsights from './AccessibilityInsights';
+import Export from './icons/Export';
+import Code from './icons/Code';
+import Camera from './icons/Camera';
 
 interface IProps {
   selectedNode: OutlineNode | null;
@@ -62,6 +69,9 @@ export default function InspectedElement({ selectedNode, stageIndex, updateActiv
               </div>
               <div className="-mr-1 border-[8px] border-l-[8px] border-transparent border-l-[var(--color-component-badge-background)]"></div>
               {selectedNode.className}
+              <span className="ml-2 font-mono text-[10px] text-[var(--color-attribute-editable-value)] opacity-70">
+                == $konva
+              </span>
             </div>
             <Tooltip id="log-to-console" />
             <button
@@ -71,10 +81,74 @@ export default function InspectedElement({ selectedNode, stageIndex, updateActiv
               onClick={() =>
                 bridge(
                   `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.logSelectedToConsole()`,
-                )
+                ).catch(() => {})
               }>
               <span className="inline-flex items-center rounded px-1" tabIndex={-1}>
                 <Debug />
+              </span>
+            </button>
+            <Tooltip id="copy-as-code" />
+            <button
+              className="flex-shrink-0 cursor-pointer rounded border-none bg-[var(--color-button-background)] p-0 text-[var(--color-button)] hover:text-[var(--color-button-hover)]"
+              data-tooltip-id="copy-as-code"
+              data-tooltip-content="Copy as Konva constructor code"
+              onClick={async () => {
+                try {
+                  const code = await bridge<string>(
+                    `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.copySelectedAsCode()`,
+                  );
+                  if (code) navigator.clipboard.writeText(code);
+                } catch {}
+              }}>
+              <span className="inline-flex items-center rounded px-1" tabIndex={-1}>
+                <Code />
+              </span>
+            </button>
+            <Tooltip id="export-node-json" />
+            <button
+              className="flex-shrink-0 cursor-pointer rounded border-none bg-[var(--color-button-background)] p-0 text-[var(--color-button)] hover:text-[var(--color-button-hover)]"
+              data-tooltip-id="export-node-json"
+              data-tooltip-content="Export selected node as JSON"
+              onClick={async () => {
+                try {
+                  const json = await bridge<string>(
+                    `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.exportSelectedJSON()`,
+                  );
+                  if (json) {
+                    const blob = new Blob([json], { type: 'application/json' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `konva-node-${selectedNode?._id || 'export'}.json`;
+                    a.click();
+                    URL.revokeObjectURL(url);
+                  }
+                } catch {}
+              }}>
+              <span className="inline-flex items-center rounded px-1" tabIndex={-1}>
+                <Export />
+              </span>
+            </button>
+            <Tooltip id="screenshot-node" />
+            <button
+              className="flex-shrink-0 cursor-pointer rounded border-none bg-[var(--color-button-background)] p-0 text-[var(--color-button)] hover:text-[var(--color-button-hover)]"
+              data-tooltip-id="screenshot-node"
+              data-tooltip-content="Screenshot selected node"
+              onClick={async () => {
+                try {
+                  const dataUrl = await bridge<string>(
+                    `window.__KONVA_DEVTOOLS_GLOBAL_HOOK__ && window.__KONVA_DEVTOOLS_GLOBAL_HOOK__.selection.screenshotSelected()`,
+                  );
+                  if (dataUrl) {
+                    const a = document.createElement('a');
+                    a.href = dataUrl;
+                    a.download = `konva-node-${selectedNode?._id || 'screenshot'}.png`;
+                    a.click();
+                  }
+                } catch {}
+              }}>
+              <span className="inline-flex items-center rounded px-1" tabIndex={-1}>
+                <Camera />
               </span>
             </button>
           </>
@@ -106,6 +180,14 @@ export default function InspectedElement({ selectedNode, stageIndex, updateActiv
             )}
 
             <Filters />
+
+            <EventListeners />
+
+            <CacheInspector />
+
+            <NodeDiff />
+
+            <AccessibilityInsights />
 
             {selectedNode.isShape && (
               <Attributes

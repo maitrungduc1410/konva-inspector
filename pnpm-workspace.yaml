@@ -3,6 +3,7 @@ packages:
   - pages/*
   - packages/*
   - tests/*
+  - examples/*
 
 onlyBuiltDependencies:
   - '@parcel/watcher'

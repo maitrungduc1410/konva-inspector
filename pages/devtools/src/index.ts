@@ -11,7 +11,6 @@ function detectFromDevtool() {
       (result, err) => {
         if (err) {
           console.log(err);
-          clearInterval(detectFromDevtoolInterval);
         } else if (result) {
           clearInterval(detectFromDevtoolInterval);
           chrome.devtools.panels.create('Konva', '/icon38.png', '/devtools-panel/index.html');
@@ -19,7 +18,6 @@ function detectFromDevtool() {
       },
     );
   } catch (e) {
-    clearInterval(detectFromDevtoolInterval);
     console.error(e);
   }
 }
